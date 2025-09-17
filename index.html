@@ -1,0 +1,2134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>¡Hospédate aquí!</title>
+ 
+<link rel="icon" type="image/x-icon" href="logo.ico">
+
+
+<!-- Google Fonts para tipografía moderna -->
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+<style>
+@keyframes escalaSubtitulo {
+  0% { transform: scale(1); }
+  20% { transform: scale(1.15); }
+  50% { transform: scale(1.3); color: #2f80ed; text-shadow: 0 4px 18px #b2dfdb, 0 2px 12px #fffbe6; }
+  80% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* --- NUEVO ESTILO DE ENCABEZADO (HERO HEADER) --- */
+.hero-header {
+  position: relative; /* Necesario para el overlay */
+  padding: 50px 20px;
+  text-align: center;
+  color: white;
+  /* Imagen de fondo de ejemplo. ¡Puedes cambiarla por una tuya! o dejar esta https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop */
+  background-image: linear-gradient(to right, rgba(44, 28, 80, 0.7), rgba(56, 137, 78, 0.55)), url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop');
+
+  background-size: cover;
+  background-position: center;
+  border-bottom: 4px solid var(--violeta-pastel);
+  box-shadow: 0 4px 20px rgba(44, 28, 80, 0.25);
+}
+
+/* --- Barra de Navegación Pegajosa (Sticky Nav) --- */
+.sticky-nav {
+  position: fixed;
+  top: -100px; /* Oculta por defecto */
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(44,44,44,0.1);
+  z-index: 1500;
+  transition: top 0.4s ease-in-out;
+  padding: 8px 30px;
+}
+.sticky-nav.visible {
+  top: 0; /* La hace visible */
+}
+.sticky-nav__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.sticky-nav__logo {
+  height: 45px;
+  width: auto;
+}
+.sticky-nav__links a {
+  color: var(--contraste-fuerte);
+  text-decoration: none;
+  font-weight: 700;
+  margin: 0 15px;
+  font-size: 1.1rem;
+}
+.hero-header__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-header__logo {
+  height: 100px;
+  width: auto;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));
+}
+
+.hero-header__text h1 {
+  font-size: 4rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.6);
+  margin: 0;
+}
+
+.hero-header__text .frase {
+  font-size: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  margin-top: 8px;
+  opacity: 0.95;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  animation: escalaSubtitulo 5s ease-in-out infinite; /* Reutilizamos tu animación */
+}
+
+.tarjeta-hotel, .tarjeta-cabana {
+  /* ...existing code... */
+  will-change: transform, box-shadow;
+}
+.tarjeta-hotel:hover, .tarjeta-cabana:hover {
+  box-shadow: 0 26px 32px rgba(44,44,44,0.22), 0 2px 8px rgba(44,44,44,0.10);
+  transform: translateY(-10px) scale(1.05);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+button, .sidebar a {
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+button:hover, .sidebar a:hover {
+  box-shadow: 0 4px 16px rgba(44,44,44,0.18);
+  transform: scale(1.08);
+}
+
+.overlay-tarjeta {
+  backdrop-filter: blur(6px);
+  background-color: rgba(0,0,0,0.6);
+}
+/* Animación de entrada para el contenido principal */
+.seccion.activa {
+  animation: fadeIn 0.7s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Indicadores para el carrusel */
+.indicadores-carrusel {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.indicador-carrusel {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gris-claro);
+  border: 2px solid var(--azul-claro);
+  cursor: pointer;
+  transition: background 0.3s, border 0.3s;
+}
+.indicador-carrusel.activo {
+  background: var(--dorado-claro);
+  border-color: var(--azul-suave);
+}
+
+/* Responsive: ocultar sidebar en móviles y mostrar botón */
+@media (max-width: 900px) {
+  .container { flex-direction: column; }
+  .sidebar {
+    position: fixed;
+    left: -240px;
+    top: 0;
+    height: 100vh;
+    z-index: 2000;
+    transition: left 0.4s;
+  }
+  .sidebar.visible {
+    left: 0;
+  }
+  #btn-menu {
+    display: block;
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    background: var(--azul-claro);
+    color: var(--blanco);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.7rem;
+    z-index: 2100;
+    box-shadow: 0 2px 8px rgba(44,44,44,0.12);
+    cursor: pointer;
+  }
+}
+@media (max-width: 600px) {
+  .content { padding: 12px; }
+  .header-text h1 { font-size: 1.5rem; }
+  .banner-outside { font-size: 1rem; padding: 10px; }
+  .tarjeta-hotel, .tarjeta-cabana { padding: 8px; }
+}
+/* Paleta moderna */
+:root {
+  --beige: #fff7e6;
+  --violeta-pastel: #c7b8ff;
+  --rosa-pastel: #ffb3d1;
+  --azul-pastel: #7ecbff;
+  --verde-pastel: #7fffd4;
+  --blanco: #eeeeee;
+  --gris-claro: #f6f7fb;
+  --dorado: #3045bbd0;
+  --contraste-fuerte: #3a2d6b;
+  --contraste-titulo: #7c3aed;
+}
+
+
+.container { display: flex; }
+.sidebar {
+  width: 240px; /* Un poco más ancho */
+  background: #fdfdff;
+  padding: 28px 20px;
+  height: 100vh;
+  position: sticky; 
+  top: 0;
+  border-right: 1px solid #e9e9f0;
+  transition: left 0.4s; /* Transición para móvil */
+  display: flex;
+  flex-direction: column;
+}
+.sidebar ul { list-style: none; padding: 0; }
+.sidebar li { margin-bottom: 20px; }
+.sidebar a {
+  color: #5a4e8c;
+  text-decoration: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: color 0.2s, background-color 0.2s;
+  font-family: 'Quicksand', 'Segoe UI', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  border-radius: 10px;
+}
+.sidebar a:hover {
+  background-color: #f0ebff;
+  color: var(--contraste-titulo);
+}
+.sidebar-link.active a {
+  background: linear-gradient(135deg, var(--violeta-pastel) 0%, var(--azul-pastel) 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+.sidebar-link.active a .sidebar-icon svg {
+  stroke: white;
+}
+.sidebar-link.active a span {
+  color: white !important;
+}
+/* Iconos SVG para los enlaces del sidebar */
+.sidebar-icon {
+  width: 22px;
+  height: 22px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+  transition: stroke 0.2s;
+}
+.sidebar-link a .sidebar-icon svg {
+  stroke: #6c4f8c;
+}
+
+.content { flex: 1; padding: 30px; }
+.content { flex: 1; padding: 36px; }
+.seccion { display: none; opacity: 0; transition: opacity 0.5s; }
+.seccion.activa { display: block; opacity: 1; }
+
+
+.banner-outside {
+  background: linear-gradient(90deg, var(--violeta-pastel) 80%, var(--rosa-pastel) 100%);
+  color: var(--contraste-titulo);
+  text-align: center;
+  padding: 16px 24px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  margin-bottom: 22px;
+  border-radius: 12px;
+  letter-spacing: 1px;
+}
+
+.bienvenida {
+  height: calc(100vh - 180px);
+  background-image: url('fondo.jpeg');
+  background-size: cover;
+  background-position: top; /* Centrado para mejor visualización */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Alineado arriba para ver más fondo */
+  text-align: center;
+  padding: 20px;
+  position: relative;
+}
+.bienvenida::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45); /* Overlay oscuro para legibilidad */
+}
+.bienvenida__content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  color: white;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+  padding-top: 1vh; /* Aumentado para bajar el contenido */
+}
+.bienvenida__titulo {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  padding-top: 2vh;
+}
+.bienvenida__texto {
+  font-size: 1.25rem;
+  margin-top: 10rem; /* Reducido para un espaciado más natural */
+  margin-bottom: 0;
+  line-height: 1.6;
+}
+.bienvenida__cta-container {
+  display: flex;
+  justify-content: center;
+  gap: 120px;
+  flex-wrap: wrap; /* Para móviles */
+}
+
+#btn-inicio {
+  display: none;
+  position: fixed;
+  top: 24px;
+  right: 24px; /* Movido a la derecha */
+  background: linear-gradient(135deg, var(--azul-pastel), var(--violeta-pastel)); /* Estilo moderno */
+  color: var(--blanco);
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(44,44,44,0.15);
+  transition: background 0.3s, transform 0.3s, box-shadow 0.3s; /* Transición suave */
+  display: flex; /* Para centrar el SVG */
+  align-items: center;
+  justify-content: center;
+}
+.btn-cta {
+  background: linear-gradient(135deg,#7c3aed 60%,#7fffd4 100%);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-cta:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+.btn-cta--alt {
+  background: transparent;
+  border: 2px solid white;
+}
+@media (max-width: 768px) {
+  .hero-header__text h1 { font-size: 3rem; }
+  .hero-header__text .frase { font-size: 5.2rem; }
+  .bienvenida__titulo { font-size: 2.5rem; }
+  .bienvenida__texto { font-size: 1.1rem; }
+}
+#btn-inicio:hover {
+  background: linear-gradient(135deg, var(--violeta-pastel), var(--rosa-pastel));
+  transform: scale(1.1);
+  box-shadow: 0 6px 18px rgba(44,44,44,0.2);
+}
+#btn-inicio svg {
+  width: 22px;
+  height: 22px;
+}
+/* Botón Ir Arriba */
+#btn-top {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #7c3aed;
+  border: none;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  box-shadow: 0 4px 12px rgba(44,44,44,0.15);
+  z-index: 9999;
+  cursor: pointer;
+  transition: background 0.3s,transform 0.3s;
+  align-items: center; /* Añadido para centrar SVG */
+  justify-content: center; /* Añadido para centrar SVG */
+}
+#btn-top:hover {
+  background: #ffd700;
+  transform: scale(1.12);
+}
+
+/* Tarjetas */
+.tarjetas-hoteles, .tarjetas-cabanas { 
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px 24px;
+  margin-top: 32px;
+  width: 100%;
+  box-sizing: border-box;
+}
+/* Tarjetas modernas */
+.tarjeta-hotel, .tarjeta-cabana {
+  background: linear-gradient(120deg, #e5d9fa 60%, #e2f7e1 100%); text-align: center;
+  padding: 22px 18px 18px 18px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(44,44,44,0.13), 0 2px 8px rgba(44,44,44,0.10);
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
+  opacity: 0;
+  animation: aparecerCascada 0.7s forwards;
+  animation-delay: var(--delay, 0s);
+  border: 2px solid #d6e6ff;
+}
+.tarjeta-hotel:hover, .tarjeta-cabana:hover {
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 16px 32px rgba(44,44,44,0.22), 0 2px 8px rgba(44,44,44,0.10);
+  background: linear-gradient(120deg, #fffbe6 80%, #e5d9fa 100%);
+}
+.tarjeta-hotel h3, .tarjeta-cabana h3 {
+  margin: 10px 0 5px;
+  color: #6c4f8c;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-family: 'Quicksand', 'Segoe UI', sans-serif;
+  text-shadow: 0 2px 12px #fff7ae;
+  border-bottom: 2px solid #d6e6ff;
+  padding-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.tarjeta-hotel p, .tarjeta-cabana p {
+  margin: 4px 0;
+  font-size: 1.08rem;
+  color: #685792;
+  font-weight: 600;
+  font-family: 'Quicksand', 'Segoe UI', sans-serif;
+  background: rgba(255,255,255,0.96);
+  border-radius: 8px;
+  padding: 4px 12px;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.07);
+}
+.servicios-iconos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 8px 0;
+  justify-content: center;
+  align-items: center;
+}
+.servicio-icon {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  margin-right: 2px;
+}
+ul li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.08rem;
+  color: #4a3677;
+  margin-bottom: 4px;
+}
+/* Animación cascada */
+@keyframes aparecerCascada {
+  from { opacity: 0; transform: translateY(40px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Carrusel */
+.carrusel { position: relative; width: 100%; height: 280px; overflow: hidden; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.imagenes-carrusel { display: flex; transition: transform 0.4s ease-in-out; }
+.imagenes-carrusel img { width: 100%; flex-shrink: 0; display: none; object-fit: cover; height: 280px; border-radius: 12px; }
+.imagenes-carrusel img.activa { display: block; }
+.carrusel .prev, .carrusel .next {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background-color: var(--azul-claro);
+  color: var(--blanco);
+  border: none;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 1.6rem;
+  z-index: 5;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.12);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.carrusel .prev:hover, .carrusel .next:hover { background-color: var(--dorado); color: var(--azul-oscuro); box-shadow: 0 4px 16px rgba(44,44,44,0.18); }
+.carrusel .prev { left: 10px; } .carrusel .next { right: 10px; }
+
+/* Overlay pantalla completa */
+.overlay-tarjeta {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 10000; padding: 20px;
+  display: none;
+}
+.overlay-tarjeta .contenido-expandido {
+  background: linear-gradient(120deg, var(--blanco) 80%, var(--violeta-pastel) 100%);
+  border-radius: 18px;
+  width: 90%;
+  max-width: 1100px;
+  max-height: 90%;
+  overflow-y: auto;
+  padding: 28px;
+  display:flex;
+  position: relative;
+}
+.overlay-tarjeta .imagenes-columna { flex:1; display:flex; flex-direction:column; gap:10px; margin-right:20px; }
+.overlay-tarjeta .imagenes-columna img { width:100px; height:100px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid transparent; }
+.overlay-tarjeta .imagenes-columna img.activa { border-color: var(--cafe-medio); }
+.overlay-tarjeta .info-expandida { flex:3; }
+.overlay-tarjeta .cerrar-btn {
+  position: absolute; top: 10px; right: 15px;
+  background-color: var(--dorado);
+  color: var(--azul-oscuro);
+  border: none;
+  font-size: 1.7rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1001;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.12);
+  transition: background 0.3s, color 0.3s;
+}
+.overlay-tarjeta .cerrar-btn:hover {
+  background-color: var(--azul-claro);
+  color: var(--blanco);
+}
+.overlay-tarjeta .main-image-expandida {
+  width: 100%;
+  height: auto;
+  max-height: 550px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  background-color: var(--gris-claro);
+  cursor: zoom-in;
+}
+
+/* Modal para zoom de imagen */
+.zoom-modal {
+  display: none;
+  position: fixed;
+  z-index: 10001; /* Por encima del overlay de la tarjeta */
+  padding-top: 80px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.95);
+  cursor: zoom-out;
+}
+.zoom-modal-content {
+  margin: auto;
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 90%;
+  max-height: 90%;
+}
+.zoom-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 2.5rem;
+  z-index: 10002;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.zoom-nav:hover {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+.zoom-nav.prev { left: 20px; }
+.zoom-nav.next { right: 20px; }
+
+
+
+
+
+/* Formulario de autenticación */
+.auth-form-section {
+  max-width: 400px;
+  margin: auto;
+}
+.auth-form-section h2 {
+  text-align: center;
+  margin-bottom: 18px;
+  font-size: 2rem;
+}
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(44,44,44,0.12);
+}
+.auth-form__icon-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.auth-form__icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.10);
+  background: #e6e6fa;
+  object-fit: cover;
+}
+.auth-form input {
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  border-width: 1.5px;
+  border-style: solid;
+}
+.auth-form button[type="submit"] {
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.12);
+  transition: background 0.3s;
+}
+
+/* Estilos específicos para registro */
+#registro h2 { color: #ffb3d1; }
+#registro .auth-form { background: #ffe5ec; }
+#registro .auth-form input { border-color: #ffb3d1; }
+#registro .auth-form button[type="submit"] { background: linear-gradient(135deg,#ffb3d1 60%,#7c3aed 100%); }
+
+/* Estilos específicos para login */
+#login h2 { color: #7c3aed; }
+#login .auth-form { background: #e8dceb; }
+#login .auth-form input { border-color: #7c3aed; }
+#login .auth-form button[type="submit"] { background: linear-gradient(135deg,#7c3aed 60%,#7fffd4 100%); }
+
+footer {
+  position: fixed; /* Fija el pie de página en la pantalla */
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background: #f9fafb;
+  color: #6b65a3;
+  text-align: center;
+  padding: 12px 0;
+  font-size: 0.95rem;
+  box-shadow: 0 -2px 12px rgba(44,44,44,0.06);
+  z-index: 999; /* Asegura que esté visible pero debajo de overlays */
+}
+
+/* --- ESTILOS REFACTORIZADOS --- */
+
+/* Sidebar */
+.sidebar__header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+.sidebar__title {
+  color: #222;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin: 0 0 10px 0;
+  font-family: 'Quicksand','Segoe UI',sans-serif;
+  line-height: 1.1;
+}
+.sidebar__star-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+.sidebar__star-icon svg {
+  filter: drop-shadow(0 2px 8px #7fffd4);
+}
+
+/* Botones de Autenticación Principales */
+.btn-auth {
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 12px 32px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.12);
+}
+.btn-auth--login {
+  background: linear-gradient(135deg,#7c3aed 60%,#7fffd4 100%);
+}
+.btn-auth--register {
+  background: linear-gradient(135deg,#ffb3d1 60%,#7c3aed 100%);
+}
+
+/* --- NUEVOS ESTILOS PARA ICONOS DE SERVICIOS --- */
+.servicios-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0;
+  padding: 0;
+  list-style: none;
+}
+.servicio-item {
+  position: relative;
+}
+.servicio-item__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #e0e7ff;
+  border-radius: 50%;
+  border: 2px solid #c7b8ff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: transform 0.2s, background-color 0.2s, box-shadow 0.2s;
+}
+.servicio-item__icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: #6c4f8c;
+  stroke-width: 2;
+}
+.servicio-item:hover .servicio-item__icon {
+  transform: translateY(-4px) scale(1.1);
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+.servicio-item__tooltip {
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4b3c6e;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
+  z-index: 10;
+}
+.tarjeta-contacto-link {
+  margin-left: 8px;
+  vertical-align: middle;
+  display: inline-block; /* Para aplicar transformaciones */
+  transition: transform 0.2s ease-in-out;
+}
+.tarjeta-ubicacion {
+  margin-top: 12px;
+}
+.tarjeta-contacto-link:hover {
+  transform: scale(1.15);
+}
+.servicio-item:hover .servicio-item__tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-4px);
+}
+.tarjeta-contacto-link svg {
+  width: 28px;
+  height: 28px;
+}
+.tarjeta-ubicacion__texto-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.tarjeta-ubicacion__texto {
+  font-size: 1.08rem;
+  color: #4b3c6e;
+  font-weight: 600;
+}
+.tarjeta-ubicacion__link {
+  margin-top: 20px;
+}
+.tarjeta-ubicacion__img-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 70px;
+}
+.tarjeta-ubicacion__img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px #7c3aed);
+  margin: auto;
+  display: block;
+}
+.banner-calificacion {
+  margin: 50px 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.banner-calificacion__texto {
+  font-size: 1.08rem;
+  color: #4b3c6e;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.estrellas-interactivas {
+  color: #fbbf24;
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+/* Títulos de Sección */
+.seccion__titulo {
+  color: #6c4f8c;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Contenedor de introducción para secciones */
+.seccion-intro {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 40px auto;
+}
+.seccion-intro p {
+  font-size: 1.15rem;
+  color: #5a4e8c;
+  line-height: 1.6;
+  margin-top: -0.5rem; /* Acerca el párrafo al título */
+}
+
+/* Banner de Bienvenida */
+#banner-welcome span {
+  font-size: 1.5rem;
+}
+@media (max-width: 768px) {
+    #banner-welcome span {
+        font-size: 1.2rem;
+    }
+}
+
+/* --- SECCIÓN SOBRE NOSOTROS Y CONTACTO --- */
+.sobre-nosotros-section {
+  padding: 40px 20px;
+  background-color: #fdf6f0;
+}
+.sobre-nosotros__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.sobre-nosotros__info h2 {
+  font-size: 2.8rem;
+  color: var(--contraste-fuerte);
+  margin-bottom: 1rem;
+}
+.sobre-nosotros__info p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #5a4e8c;
+  margin-bottom: 1rem;
+}
+.sobre-nosotros__info img {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  margin-top: 20px;
+}
+.contact-form {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+.contact-form h3 {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--contraste-titulo);
+}
+.contact-form .form-group {
+  margin-bottom: 15px;
+}
+.contact-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #5a4e8c;
+}
+.contact-form input, .contact-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px solid #dcd6f7;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+</style>
+
+</head>
+<body>
+<div id="loader"><div class="spinner"></div></div>
+<button id="btn-menu" style="display:none;" title="Menú">☰</button>
+<button id="btn-inicio" title="Volver al inicio">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+</button>
+
+<header class="hero-header">
+  <div class="hero-header__content">
+    <img src="logo.png" alt="Logo del sitio" class="hero-header__logo" />
+    <div class="hero-header__text">
+        <h1>¡Hospédate aquí!</h1>
+        <p class="frase">Explora la belleza natural de Casanare</p>
+    </div>
+  </div>
+</header>
+
+<!-- Nueva barra de navegación pegajosa -->
+<nav id="sticky-nav" class="sticky-nav">
+    <div class="sticky-nav__content">
+        <img src="logo.png" alt="Logo" class="sticky-nav__logo" />
+        <div class="sticky-nav__links">
+            <a href="#" class="seccion-link" data-seccion="hoteles">Hoteles</a>
+            <a href="#" class="seccion-link" data-seccion="cabanas">Cabañas</a>
+            <a href="#" class="seccion-link" data-seccion="sobre-nosotros">Sobre Nosotros</a>
+        </div>
+        <div id="sticky-nav-auth" class="sticky-nav__auth">
+            <button id="sticky-login-btn" class="seccion-link btn-auth btn-auth--login" data-seccion="login" style="padding: 8px 16px; font-size: 0.9rem; margin-right: 8px;">Iniciar Sesión</button>
+            <button id="sticky-register-btn" class="seccion-link btn-auth btn-auth--register" data-seccion="registro" style="padding: 8px 16px; font-size: 0.9rem;">Registrarse</button>
+            <a href="#" id="sticky-logout-link" style="display: none; color: #c94c4c; font-weight: 700; text-decoration: none;">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+  <nav class="sidebar">
+    <div class="sidebar__header">
+      <h2 class="sidebar__title">Mira lo que tenemos para ti...</h2>
+        <span class="sidebar__star-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="#7c3aed" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2l2.39 7.26H22l-6.19 4.5L17.61 21 12 16.77 6.39 21l1.8-7.24L2 9.26h7.61z"/>
+          </svg>
+        </span>
+    </div>
+  <ul>
+      <li class="sidebar-link" data-seccion="hoteles">
+        <a onclick="mostrarSeccion('hoteles')">
+          <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#6c4f8c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 3v4M8 3v4"/><path d="M12 16v2"/></svg>
+          </span>
+          <span style="color:#222;font-weight:600;font-size:1rem;">Hoteles</span>
+        </a>
+      </li>
+      <li class="sidebar-link" data-seccion="cabanas">
+        <a onclick="mostrarSeccion('cabanas')">
+          <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4b3c6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l9-7 9 7v11"/><rect x="7" y="14" width="10" height="7" rx="2"/></svg>
+          </span>
+          <span style="color:#222;font-weight:600;font-size:1rem;">Cabañas</span>
+        </a>
+      </li>
+      <li class="sidebar-link" data-seccion="sobre-nosotros">
+        <a onclick="mostrarSeccion('sobre-nosotros')">
+          <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4b3c6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 9.8c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+          </span>
+          <span style="color:#222;font-weight:600;font-size:1rem;">Contacto</span>
+        </a>
+      </li>
+      <li id="logout-link" style="display: none;">
+        <a href="#">
+          <span class="sidebar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#c94c4c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </span>
+          <span style="color:#c94c4c;">Cerrar Sesión</span>
+        </a>
+      </li>
+    </ul>
+    <div id="sidebar-auth-links" style="text-align:center;margin-top:32px;font-size:1rem;">
+      ¿Ya tienes cuenta? <a href="#" class="seccion-link" data-seccion="login" style="color:#7c3aed;text-decoration:underline;font-weight:600;">Inicia sesión</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div id="main-auth-buttons" style="display:flex;justify-content:center;gap:24px;margin-bottom:32px;">
+      <button class="seccion-link btn-auth btn-auth--login" data-seccion="login">Iniciar Sesión</button>
+      <button class="seccion-link btn-auth btn-auth--register" data-seccion="registro">Registrarse</button>
+    </div>
+
+    <!-- FORMULARIO DE REGISTRO -->
+    <section id="registro" class="seccion auth-form-section">
+      <h2>Registro de Usuario</h2>
+      <form class="auth-form">
+        <div class="auth-form__icon-wrapper">
+          <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Usuario" class="auth-form__icon" />
+        </div>
+        <input type="text" name="usuario" placeholder="Usuario" required>
+        <input type="email" name="correo" placeholder="Correo electrónico" required>
+        <input type="password" name="contrasena" placeholder="Contraseña" required>
+        <button type="submit">Registrar</button>
+        <span style="text-align:center;font-size:1rem;">¿Ya tienes cuenta? <a href="#" class="seccion-link" data-seccion="login" style="color:#7c3aed;text-decoration:underline;">Inicia sesión</a></span>
+      </form>
+    </section>
+
+    <!-- FORMULARIO DE INICIO DE SESIÓN -->
+    <section id="login" class="seccion auth-form-section">
+      <h2>Iniciar Sesión</h2>
+      <form class="auth-form">
+        <div class="auth-form__icon-wrapper">
+          <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Usuario" class="auth-form__icon" />
+        </div>
+        <input type="text" name="usuario" placeholder="Usuario" required>
+        <input type="password" name="contrasena" placeholder="Contraseña" required>
+        <button type="submit">Entrar</button>
+        <span style="text-align:center;font-size:1rem;">¿No tienes cuenta? <a href="#" class="seccion-link" data-seccion="registro" style="color:#7c3aed;text-decoration:underline;">Regístrate</a></span>
+      </form>
+    </section>
+        
+
+
+
+
+    
+
+    <!-- Loader animado -->
+    <div id="loader" style="display:none;"><div class="spinner"></div></div>
+
+    <!-- Botón flotante para ir arriba -->
+    <button id="btn-top" title="Ir arriba">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="12" fill="inherit"/>
+        <path d="M12 8L8 12M12 8L16 12M12 8V16" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    </section>
+    <div id="banner-welcome" class="banner-outside">
+      <span>🏕️ Bienvenido a Tauramena, Casanare — Naturaleza, descanso y hospitalidad 🐴</span>
+  <!-- Ubicación principal eliminada -->
+    </div>
+
+    <section id="bienvenida" class="seccion activa">
+      <div class="bienvenida">
+        <div class="bienvenida__content">
+          <h2 class="bienvenida__titulo">Tu Aventura en Tauramena Comienza Aquí</h2>
+          <div class="bienvenida__cta-container">
+            <button class="seccion-link btn-cta" data-seccion="hoteles">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 3v4M8 3v4"/><path d="M12 16v2"/></svg>
+              Ver Hoteles
+            </button>
+            <button class="seccion-link btn-cta btn-cta--alt" data-seccion="cabanas">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l9-7 9 7v11"/><rect x="7" y="14" width="10" height="7" rx="2"/></svg>
+              Ver Cabañas
+            </button>
+          </div>
+          <p class="bienvenida__texto">
+            Descubre los mejores lugares para hospedarte. Desde cómodos hoteles en el corazón del pueblo hasta tranquilas cabañas rodeadas de la imponente naturaleza de Casanare.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- NUEVA SECCIÓN: SOBRE NOSOTROS Y CONTACTO -->
+    <section id="sobre-nosotros" class="seccion sobre-nosotros-section">
+      <div class="sobre-nosotros__grid">
+        <div class="sobre-nosotros__info">
+          <h2>Un Paraíso por Descubrir</h2>
+          <p>
+            Tauramena, conocido como el "Corazón del Casanare", es un tesoro de biodiversidad y cultura llanera. Rodeado de imponentes montañas y extensas sabanas, ofrece paisajes inolvidables, atardeceres de ensueño y la calidez de su gente.
+          </p>
+          <p>
+            Explora sus ríos cristalinos, avista fauna silvestre y déjate envolver por las tradiciones de una tierra auténtica. ¡Tu próxima gran aventura te espera aquí!
+          </p>
+          <img src="tauratodo.jpg" alt="Paisaje de Tauramena, Casanare">
+        </div>
+        <div class="sobre-nosotros__form">
+          <form id="contact-form" class="contact-form">
+            <h3>Contáctanos</h3>
+            <div class="form-group">
+              <label for="nombre">Nombre</label>
+              <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+              <label for="correo">Correo Electrónico</label>
+              <input type="email" id="correo" name="correo" required>
+            </div>
+            <div class="form-group">
+              <label for="mensaje">Mensaje</label>
+              <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn-auth btn-auth--login" style="width: 100%;">Enviar Mensaje</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOTELES -->
+
+
+
+    <section id="hoteles" class="seccion">
+      <div class="seccion-intro">
+        <h2 class="seccion__titulo">Confort y Hospitalidad</h2>
+        <p>Encuentra el refugio perfecto para tu estancia. Nuestros hoteles seleccionados te ofrecen desde modernas instalaciones hasta un servicio cálido y personalizado, asegurando una experiencia inolvidable.</p>
+      </div>
+      <div class="tarjetas-hoteles">
+        
+        <div class="tarjeta-hotel" data-id="1" data-tipo="hotel" onclick="expandirTarjeta(this)">
+          <h3>Hotel Cacique Mena</h3>
+
+
+          
+          <div class="carrusel">
+            <button class="prev" onclick="moverCarrusel(event,-1)">❮</button>
+            <div class="imagenes-carrusel">
+              <img src="Hotel Cacique Mena/cacique portada.jpeg" class="activa" />
+              <img src="Hotel Cacique Mena/cacique recep.jpeg" />
+              <img src="Hotel Cacique Mena/cacique sala.jpeg" />
+              <img src="Hotel Cacique Mena/cacique audit.jpeg" />
+              <img src="Hotel Cacique Mena/cacique piscina.jpeg" />
+              <img src="Hotel Cacique Mena/cacique H1.jpeg" />
+              <img src="Hotel Cacique Mena/cacique H2.jpeg" />
+              <img src="Hotel Cacique Mena/cacique baño.jpeg" />
+              <img src="Hotel Cacique Mena/cacique baño2.jpeg" />
+            </div>
+            <button class="next" onclick="moverCarrusel(event,1)">❯</button>
+          </div>
+          <p><strong>Servicios:</strong></p>
+          <ul class="servicios-grid">
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 14a2 2 0 100-4 2 2 0 000 4z"/><path d="M21 12c-1.89 4.96-6.02 8-9 8s-7.11-3.04-9-8c1.89-4.96 6.02-8 9-8s7.11 3.04 9 8z"/></svg></div>
+              <span class="servicio-item__tooltip">Piscina</span>
+            </li>
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M18 8V6a2 2 0 00-2-2H8a2 2 0 00-2 2v2m12 4v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4m12-4h-4a2 2 0 00-4 0H6m12 4v-4"/></svg></div>
+              <span class="servicio-item__tooltip">Auditorio</span>
+            </li>
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+              <span class="servicio-item__tooltip">Lavandería</span>
+            </li>
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+              <span class="servicio-item__tooltip">Planchado</span>
+            </li>
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.1a6 6 0 016.95 0M12 20.48V19.5"/></svg></div>
+              <span class="servicio-item__tooltip">Wifi</span>
+            </li>
+          </ul>
+          
+          <p><strong>Tel:</strong> 322 484 5540</p>
+          <a href="https://wa.me/3224845540" target="_blank" class="tarjeta-contacto-link" title="WhatsApp">
+            <svg viewBox="0 0 24 24"><path fill="#25D366" d="M19.7,4.3c-1.9-1.9-4.4-2.9-7.1-2.9c-5.6,0-10.1,4.5-10.1,10.1c0,1.8,0.5,3.5,1.3,5l-1.5,5.5l5.6-1.5 c1.4,0.8,3,1.3,4.7,1.3h0c5.6,0,10.1-4.5,10.1-10.1C22.6,8.7,21.6,6.2,19.7,4.3z"/><path fill="#FFFFFF" d="M16.5,13.3c-0.3-0.1-1.6-0.8-1.8-0.9c-0.2-0.1-0.4-0.1-0.6,0.1c-0.2,0.2-0.7,0.9-0.8,1c-0.1,0.2-0.3,0.2-0.5,0.1 c-0.2-0.1-1.1-0.4-2.1-1.2c-0.8-0.7-1.3-1.5-1.5-1.8c-0.1-0.3,0-0.4,0.1-0.5c0.1-0.1,0.2-0.3,0.4-0.4c0.1-0.1,0.1-0.2,0.2-0.3 c0.1-0.1,0.1-0.2,0-0.4c-0.1-0.1-0.6-1.5-0.8-2.1c-0.2-0.5-0.4-0.5-0.6-0.5C8.8,7.6,8.6,7.6,8.4,7.6c-0.2,0-0.5,0.1-0.7,0.3 C7.5,8.2,7,8.8,7,9.8c0,1,0.7,1.9,0.8,2.1c0.1,0.2,1.5,2.3,3.7,3.2c2.2,0.9,2.2,0.6,2.6,0.6c0.4,0,1.6-0.7,1.8-1.3 c0.2-0.7,0.2-1.2,0.1-1.3C16.9,13.5,16.7,13.4,16.5,13.3z"/></svg>
+          </a>
+          <p><strong>Precio:</strong> Desde $70.000, Hasta $160.000 por noche</p>
+          <div class="tarjeta-ubicacion">
+            <div class="tarjeta-ubicacion__texto-wrapper">
+              <span class="tarjeta-ubicacion__texto">Mostrar ubicación en el mapa</span>
+            </div>
+            <a href="https://www.google.com/maps/place/Hotel+Cacique+Mena/@5.0145221,-72.7550823,17z/data=!4m9!3m8!1s0x8e6ad84a39864641:0x2390bdd9bb7e215a!5m2!4m1!1i2!8m2!3d5.0145221!4d-72.7525074!16s%2Fg%2F11cjhrkvnn?entry=ttu&g_ep=EgoyMDI1MDgyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="tarjeta-ubicacion__link" title="Ver ubicación en Google Maps">
+              <div class="tarjeta-ubicacion__img-wrapper"><img src="ubicacion1.png" alt="Ubicación" class="tarjeta-ubicacion__img" /></div>
+            </a>
+
+            <div class="banner-calificacion">
+              <span class="banner-calificacion__texto">Califica este hotel:</span>
+          <span class="estrellas-interactivas">
+            <span data-valor="1">☆</span><span data-valor="2">☆</span><span data-valor="3">☆</span><span data-valor="4">☆</span><span data-valor="5">☆</span>
+            </span>
+    </div>
+          </div>  
+        </div>
+
+        <!-- Hotel 2: Central -->
+        <div class="tarjeta-hotel" data-id="2" data-tipo="hotel" onclick="expandirTarjeta(this)">
+  
+          <h3>Hotel Central</h3>
+          <div class="carrusel">
+            <button class="prev" onclick="moverCarrusel(event,-1)">❮</button>
+            <div class="imagenes-carrusel">
+              <img src="Hotel Central/Central portada.jpg" class="activa" />
+              <img src="Hotel Central/Central recepción.jpg" />
+              <img src="Hotel Central/Central H1.jpg" />
+              <img src="Hotel Central/Central H2.jpg" />
+              <img src="Hotel Central/Central baño.jpg" />
+              <img src="Hotel Central/Central armario.jpg" />
+            </div>
+            <button class="next" onclick="moverCarrusel(event,1)">❯</button>
+          </div>
+          <p><strong>Servicios:</strong></p>
+          <ul class="servicios-grid">
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.1a6 6 0 016.95 0M12 20.48V19.5"/></svg></div>
+              <span class="servicio-item__tooltip">Wifi</span>
+            </li>
+          </ul>
+          <p><strong>Tel:</strong> 322 820 7693</p>
+          <a href="https://wa.me/3228207693" target="_blank" class="tarjeta-contacto-link" title="WhatsApp">
+            <svg viewBox="0 0 24 24"><path fill="#25D366" d="M19.7,4.3c-1.9-1.9-4.4-2.9-7.1-2.9c-5.6,0-10.1,4.5-10.1,10.1c0,1.8,0.5,3.5,1.3,5l-1.5,5.5l5.6-1.5 c1.4,0.8,3,1.3,4.7,1.3h0c5.6,0,10.1-4.5,10.1-10.1C22.6,8.7,21.6,6.2,19.7,4.3z"/><path fill="#FFFFFF" d="M16.5,13.3c-0.3-0.1-1.6-0.8-1.8-0.9c-0.2-0.1-0.4-0.1-0.6,0.1c-0.2,0.2-0.7,0.9-0.8,1c-0.1,0.2-0.3,0.2-0.5,0.1 c-0.2-0.1-1.1-0.4-2.1-1.2c-0.8-0.7-1.3-1.5-1.5-1.8c-0.1-0.3,0-0.4,0.1-0.5c0.1-0.1,0.2-0.3,0.4-0.4c0.1-0.1,0.1-0.2,0.2-0.3 c0.1-0.1,0.1-0.2,0-0.4c-0.1-0.1-0.6-1.5-0.8-2.1c-0.2-0.5-0.4-0.5-0.6-0.5C8.8,7.6,8.6,7.6,8.4,7.6c-0.2,0-0.5,0.1-0.7,0.3 C7.5,8.2,7,8.8,7,9.8c0,1,0.7,1.9,0.8,2.1c0.1,0.2,1.5,2.3,3.7,3.2c2.2,0.9,2.2,0.6,2.6,0.6c0.4,0,1.6-0.7,1.8-1.3 c0.2-0.7,0.2-1.2,0.1-1.3C16.9,13.5,16.7,13.4,16.5,13.3z"/></svg>
+          </a>
+          <p><strong>Precio:</strong> Desde $50.000, Hasta $140.000 por noche</p>
+          
+          <div class="tarjeta-ubicacion">
+            <div class="tarjeta-ubicacion__texto-wrapper">
+              <span class="tarjeta-ubicacion__texto">Mostrar ubicación en el mapa</span>
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Central+Tauramena+Casanare" target="_blank" class="tarjeta-ubicacion__link" title="Ver ubicación en Google Maps">
+              <div class="tarjeta-ubicacion__img-wrapper"><img src="ubicacion1.png" alt="Ubicación" class="tarjeta-ubicacion__img" /></div>
+            </a>
+        <div class="banner-calificacion">
+              <span class="banner-calificacion__texto">Califica este hotel:</span>
+          <span class="estrellas-interactivas">
+            <span data-valor="1">☆</span><span data-valor="2">☆</span><span data-valor="3">☆</span><span data-valor="4">☆</span><span data-valor="5">☆</span>
+          </span>
+        </div>
+
+            
+  </div>
+  
+        </div>
+
+        <!-- Hotel 3: Paso Real -->
+        <div class="tarjeta-hotel" data-id="3" data-tipo="hotel" onclick="expandirTarjeta(this)">
+          <h3>Hotel Paso Real</h3>
+          <div class="carrusel">
+            <button class="prev" onclick="moverCarrusel(event,-1)">❮</button>
+            <div class="imagenes-carrusel">
+              <img src="Hotel Paso Real/Paso R portada.jpg" class="activa" />
+              <img src="Hotel Paso Real/Paso R recepción.jpg" />
+              <img src="Hotel Paso Real/Paso R sala.jpg" />
+              <img src="Hotel Paso Real/Paso R Parq.jpg" />
+              <img src="Hotel Paso Real/Paso R gym.jpg" />
+              <img src="Hotel Paso Real/Paso R gym2.jpg" />
+              <img src="Hotel Paso Real/Paso R H1.jpg" />
+              <img src="Hotel Paso Real/Paso R H2.jpg" />
+              <img src="Hotel Paso Real/Paso R H3.jpg" />
+              <img src="Hotel Paso Real/Paso R H4.jpg" />
+              <img src="Hotel Paso Real/Paso R baño.jpg" />
+              <img src="Hotel Paso Real/Paso R nevera.jpg" />
+              <img src="Hotel Paso Real/Paso R armario.jpg" />
+            </div>
+            <button class="next" onclick="moverCarrusel(event,1)">❯</button>
+          </div>
+          <p><strong>Servicios:</strong></p>
+          <ul class="servicios-grid">
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.1a6 6 0 016.95 0M12 20.48V19.5"/></svg></div>
+              <span class="servicio-item__tooltip">Wifi</span>
+            </li>
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path d="M12 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+              <span class="servicio-item__tooltip">Lavandería</span>
+            </li>
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 6V4M12 20v-2M4 12H2M22 12h-2M6 18l-1 1M18 6l1-1M19 19l-1-1M6 6l-1-1M12 16a4 4 0 100-8 4 4 0 000 8z"/></svg></div>
+              <span class="servicio-item__tooltip">Gym</span>
+            </li>
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4l2 2"/></svg></div>
+              <span class="servicio-item__tooltip">Parqueadero</span>
+            </li>
+          </ul>
+          <p><strong>Tel:</strong> 321 997 3208</p>
+          <a href="https://wa.me/3219973208" target="_blank" class="tarjeta-contacto-link" title="WhatsApp">
+            <svg viewBox="0 0 24 24"><path fill="#25D366" d="M19.7,4.3c-1.9-1.9-4.4-2.9-7.1-2.9c-5.6,0-10.1,4.5-10.1,10.1c0,1.8,0.5,3.5,1.3,5l-1.5,5.5l5.6-1.5 c1.4,0.8,3,1.3,4.7,1.3h0c5.6,0,10.1-4.5,10.1-10.1C22.6,8.7,21.6,6.2,19.7,4.3z"/><path fill="#FFFFFF" d="M16.5,13.3c-0.3-0.1-1.6-0.8-1.8-0.9c-0.2-0.1-0.4-0.1-0.6,0.1c-0.2,0.2-0.7,0.9-0.8,1c-0.1,0.2-0.3,0.2-0.5,0.1 c-0.2-0.1-1.1-0.4-2.1-1.2c-0.8-0.7-1.3-1.5-1.5-1.8c-0.1-0.3,0-0.4,0.1-0.5c0.1-0.1,0.2-0.3,0.4-0.4c0.1-0.1,0.1-0.2,0.2-0.3 c0.1-0.1,0.1-0.2,0-0.4c-0.1-0.1-0.6-1.5-0.8-2.1c-0.2-0.5-0.4-0.5-0.6-0.5C8.8,7.6,8.6,7.6,8.4,7.6c-0.2,0-0.5,0.1-0.7,0.3 C7.5,8.2,7,8.8,7,9.8c0,1,0.7,1.9,0.8,2.1c0.1,0.2,1.5,2.3,3.7,3.2c2.2,0.9,2.2,0.6,2.6,0.6c0.4,0,1.6-0.7,1.8-1.3 c0.2-0.7,0.2-1.2,0.1-1.3C16.9,13.5,16.7,13.4,16.5,13.3z"/></svg>
+          </a>
+          <p><strong>Precio:</strong> Desde $55.000, Hasta $150.000 por noche</p>
+          <div class="tarjeta-ubicacion">
+            <div class="tarjeta-ubicacion__texto-wrapper">
+              <span class="tarjeta-ubicacion__texto">Mostrar ubicación en el mapa</span>
+            </div>
+            <a href="https://www.google.com/maps/place/Hotel+Paso+Real/@5.0154051,-72.7543781,17z/data=!4m9!3m8!1s0x8e6ad84bcd8ba917:0xe55ac01c00d9fbce!5m2!4m1!1i2!8m2!3d5.0153998!4d-72.7517978!16s%2Fg%2F11bw3cc4y9?entry=ttu&g_ep=EgoyMDI1MDgyNS4wIKXMDSoASAFQAw%3D%3D  " target="_blank" class="tarjeta-ubicacion__link" title="Ver ubicación en Google Maps">
+              <div class="tarjeta-ubicacion__img-wrapper"><img src="ubicacion1.png" alt="Ubicación" class="tarjeta-ubicacion__img" /></div>
+            </a>
+    <div class="banner-calificacion">
+              <span class="banner-calificacion__texto">Califica este hotel:</span>
+          <span class="estrellas-interactivas">
+            <span data-valor="1">☆</span><span data-valor="2">☆</span><span data-valor="3">☆</span><span data-valor="4">☆</span><span data-valor="5">☆</span>
+          </span>
+        </div>
+
+          </div>
+        </div>
+
+        <!-- Hotel 4: Menoa -->
+        <div class="tarjeta-hotel" data-id="4" data-tipo="hotel" onclick="expandirTarjeta(this)">
+          <h3>Hotel Menoa</h3>
+          <div class="carrusel">
+            <button class="prev" onclick="moverCarrusel(event,-1)">❮</button>
+            <div class="imagenes-carrusel">
+              <img src="Hotel Menoa/Menoa portada.jpg" class="activa" />
+              <img src="Hotel Menoa/Menoa recepción.jpg" />
+              <img src="Hotel Menoa/Menoa sala.jpg" />
+              <img src="Hotel Menoa/Menoa H1.jpg" />
+              <img src="Hotel Menoa/Menoa H2.jpg" />
+              <img src="Hotel Menoa/Menoa baño.jpg" />
+              <img src="Hotel Menoa/Menoa tv, air.jpg" />
+            </div>
+            <button class="next" onclick="moverCarrusel(event,1)">❯</button>
+          </div>
+          <p><strong>Servicios:</strong></p>
+          <ul class="servicios-grid">
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.1a6 6 0 016.95 0M12 20.48V19.5"/></svg></div>
+              <span class="servicio-item__tooltip">Wifi</span>
+            </li>
+          </ul>
+          <p><strong>Tel:</strong> 320 972 0946</p>
+          <a href="https://wa.me/3209720946" target="_blank" class="tarjeta-contacto-link" title="WhatsApp">
+            <svg viewBox="0 0 24 24"><path fill="#25D366" d="M19.7,4.3c-1.9-1.9-4.4-2.9-7.1-2.9c-5.6,0-10.1,4.5-10.1,10.1c0,1.8,0.5,3.5,1.3,5l-1.5,5.5l5.6-1.5 c1.4,0.8,3,1.3,4.7,1.3h0c5.6,0,10.1-4.5,10.1-10.1C22.6,8.7,21.6,6.2,19.7,4.3z"/><path fill="#FFFFFF" d="M16.5,13.3c-0.3-0.1-1.6-0.8-1.8-0.9c-0.2-0.1-0.4-0.1-0.6,0.1c-0.2,0.2-0.7,0.9-0.8,1c-0.1,0.2-0.3,0.2-0.5,0.1 c-0.2-0.1-1.1-0.4-2.1-1.2c-0.8-0.7-1.3-1.5-1.5-1.8c-0.1-0.3,0-0.4,0.1-0.5c0.1-0.1,0.2-0.3,0.4-0.4c0.1-0.1,0.1-0.2,0.2-0.3 c0.1-0.1,0.1-0.2,0-0.4c-0.1-0.1-0.6-1.5-0.8-2.1c-0.2-0.5-0.4-0.5-0.6-0.5C8.8,7.6,8.6,7.6,8.4,7.6c-0.2,0-0.5,0.1-0.7,0.3 C7.5,8.2,7,8.8,7,9.8c0,1,0.7,1.9,0.8,2.1c0.1,0.2,1.5,2.3,3.7,3.2c2.2,0.9,2.2,0.6,2.6,0.6c0.4,0,1.6-0.7,1.8-1.3 c0.2-0.7,0.2-1.2,0.1-1.3C16.9,13.5,16.7,13.4,16.5,13.3z"/></svg>
+          </a>
+          <p><strong>Precio:</strong> Desde $70.000, Hasta $150.000 por noche</p>
+          <div class="tarjeta-ubicacion">
+            <div class="tarjeta-ubicacion__texto-wrapper">
+              <span class="tarjeta-ubicacion__texto">Mostrar ubicación en el mapa</span>
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Menoa+Tauramena+Casanare" target="_blank" class="tarjeta-ubicacion__link" title="Ver ubicación en Google Maps">
+              <div class="tarjeta-ubicacion__img-wrapper"><img src="ubicacion1.png" alt="Ubicación" class="tarjeta-ubicacion__img" /></div>
+            </a>
+
+             <div class="banner-calificacion">
+              <span class="banner-calificacion__texto">Califica este hotel:</span>
+          <span class="estrellas-interactivas">
+            <span data-valor="1">☆</span><span data-valor="2">☆</span><span data-valor="3">☆</span><span data-valor="4">☆</span><span data-valor="5">☆</span>
+          </span>
+        </div>  
+          </div>
+        </div>
+
+        <!-- Hotel 5: Milan -->
+        <div class="tarjeta-hotel" data-id="5" data-tipo="hotel" onclick="expandirTarjeta(this)">
+          <h3>Hotel Milan</h3>
+          <div class="carrusel">
+            <button class="prev" onclick="moverCarrusel(event,-1)">❮</button>
+            <div class="imagenes-carrusel">
+              <img src="Hotel Milan/Milan sala.jpg" class="activa" />
+              <img src="Hotel Milan/Milan H1.jpg" />
+              <img src="Hotel Milan/Milan H2.jpg" />
+              <img src="Hotel Milan/Milan armario.jpg" />
+              <img src="Hotel Milan/Milan tv, vent.jpg" />
+            </div>
+            <button class="next" onclick="moverCarrusel(event,1)">❯</button>
+          </div>
+          <p><strong>Servicios:</strong></p>
+          <ul class="servicios-grid">
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.1a6 6 0 016.95 0M12 20.48V19.5"/></svg></div>
+              <span class="servicio-item__tooltip">Wifi</span>
+            </li>
+          </ul>
+          <p><strong>Tel:</strong> 312 528 8850</p>
+          <a href="https://wa.me/3125288850" target="_blank" class="tarjeta-contacto-link" title="WhatsApp">
+            <svg viewBox="0 0 24 24"><path fill="#25D366" d="M19.7,4.3c-1.9-1.9-4.4-2.9-7.1-2.9c-5.6,0-10.1,4.5-10.1,10.1c0,1.8,0.5,3.5,1.3,5l-1.5,5.5l5.6-1.5 c1.4,0.8,3,1.3,4.7,1.3h0c5.6,0,10.1-4.5,10.1-10.1C22.6,8.7,21.6,6.2,19.7,4.3z"/><path fill="#FFFFFF" d="M16.5,13.3c-0.3-0.1-1.6-0.8-1.8-0.9c-0.2-0.1-0.4-0.1-0.6,0.1c-0.2,0.2-0.7,0.9-0.8,1c-0.1,0.2-0.3,0.2-0.5,0.1 c-0.2-0.1-1.1-0.4-2.1-1.2c-0.8-0.7-1.3-1.5-1.5-1.8c-0.1-0.3,0-0.4,0.1-0.5c0.1-0.1,0.2-0.3,0.4-0.4c0.1-0.1,0.1-0.2,0.2-0.3 c0.1-0.1,0.1-0.2,0-0.4c-0.1-0.1-0.6-1.5-0.8-2.1c-0.2-0.5-0.4-0.5-0.6-0.5C8.8,7.6,8.6,7.6,8.4,7.6c-0.2,0-0.5,0.1-0.7,0.3 C7.5,8.2,7,8.8,7,9.8c0,1,0.7,1.9,0.8,2.1c0.1,0.2,1.5,2.3,3.7,3.2c2.2,0.9,2.2,0.6,2.6,0.6c0.4,0,1.6-0.7,1.8-1.3 c0.2-0.7,0.2-1.2,0.1-1.3C16.9,13.5,16.7,13.4,16.5,13.3z"/></svg>
+          </a>
+          <p><strong>Precio:</strong> Desde $50.000, Hasta $100.000 por noche</p>
+          <div class="tarjeta-ubicacion">
+            <div class="tarjeta-ubicacion__texto-wrapper">
+              <span class="tarjeta-ubicacion__texto">Mostrar ubicación en el mapa</span>
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Milan+Tauramena+Casanare" target="_blank" class="tarjeta-ubicacion__link" title="Ver ubicación en Google Maps">
+              <div class="tarjeta-ubicacion__img-wrapper"><img src="ubicacion1.png" alt="Ubicación" class="tarjeta-ubicacion__img" /></div>
+            </a>
+         <div class="banner-calificacion">
+              <span class="banner-calificacion__texto">Califica este hotel:</span>
+          <span class="estrellas-interactivas">
+            <span data-valor="1">☆</span><span data-valor="2">☆</span><span data-valor="3">☆</span><span data-valor="4">☆</span><span data-valor="5">☆</span>
+          </span>
+        </div>
+
+          </div>
+        </div>
+
+        <!-- Hotel 6: Patriota -->
+        <div class="tarjeta-hotel" data-id="6" data-tipo="hotel" onclick="expandirTarjeta(this)">
+          <h3>Hotel Patriota</h3>
+          <div class="carrusel">
+            <button class="prev" onclick="moverCarrusel(event,-1)">❮</button>
+            <div class="imagenes-carrusel">
+              <img src="Hotel Patriota/Patriota portada.jpg" class="activa" />
+              <img src="Hotel Patriota/Patriota H1.jpg" />
+              <img src="Hotel Patriota/Patriota H2.jpg" />
+              <img src="Hotel Patriota/Patriota vent.jpg" />
+              <img src="Hotel Patriota/Patriota H3.jpg" />
+              <img src="Hotel Patriota/Patriota baño.jpg" />
+            </div>
+            <button class="next" onclick="moverCarrusel(event,1)">❯</button>
+          </div>
+          <p><strong>Servicios:</strong></p>
+          <ul class="servicios-grid">
+            <li class="servicio-item">
+              <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.1a6 6 0 016.95 0M12 20.48V19.5"/></svg></div>
+              <span class="servicio-item__tooltip">Wifi</span>
+            </li>
+          </ul>
+          <p><strong>Tel:</strong> 321 212 9787</p>
+          <a href="https://wa.me/3212129787" target="_blank" class="tarjeta-contacto-link" title="WhatsApp">
+            <svg viewBox="0 0 24 24"><path fill="#25D366" d="M19.7,4.3c-1.9-1.9-4.4-2.9-7.1-2.9c-5.6,0-10.1,4.5-10.1,10.1c0,1.8,0.5,3.5,1.3,5l-1.5,5.5l5.6-1.5 c1.4,0.8,3,1.3,4.7,1.3h0c5.6,0,10.1-4.5,10.1-10.1C22.6,8.7,21.6,6.2,19.7,4.3z"/><path fill="#FFFFFF" d="M16.5,13.3c-0.3-0.1-1.6-0.8-1.8-0.9c-0.2-0.1-0.4-0.1-0.6,0.1c-0.2,0.2-0.7,0.9-0.8,1c-0.1,0.2-0.3,0.2-0.5,0.1 c-0.2-0.1-1.1-0.4-2.1-1.2c-0.8-0.7-1.3-1.5-1.5-1.8c-0.1-0.3,0-0.4,0.1-0.5c0.1-0.1,0.2-0.3,0.4-0.4c0.1-0.1,0.1-0.2,0.2-0.3 c0.1-0.1,0.1-0.2,0-0.4c-0.1-0.1-0.6-1.5-0.8-2.1c-0.2-0.5-0.4-0.5-0.6-0.5C8.8,7.6,8.6,7.6,8.4,7.6c-0.2,0-0.5,0.1-0.7,0.3 C7.5,8.2,7,8.8,7,9.8c0,1,0.7,1.9,0.8,2.1c0.1,0.2,1.5,2.3,3.7,3.2c2.2,0.9,2.2,0.6,2.6,0.6c0.4,0,1.6-0.7,1.8-1.3 c0.2-0.7,0.2-1.2,0.1-1.3C16.9,13.5,16.7,13.4,16.5,13.3z"/></svg>
+          </a>
+          <p><strong>Precio:</strong> Desde $55.000, Hasta $150.000 por noche</p>
+          <div class="tarjeta-ubicacion">
+            <div class="tarjeta-ubicacion__texto-wrapper">
+              <span class="tarjeta-ubicacion__texto">Mostrar ubicación en el mapa</span>
+            </div>
+            <a href="https://www.google.com/maps/search/?api=1&query=Hotel+Patriota+Tauramena+Casanare" target="_blank" class="tarjeta-ubicacion__link" title="Ver ubicación en Google Maps">
+              <div class="tarjeta-ubicacion__img-wrapper"><img src="ubicacion1.png" alt="Ubicación" class="tarjeta-ubicacion__img" /></div>
+            </a>
+
+            <div class="banner-calificacion">
+              <span class="banner-calificacion__texto">Califica este hotel:</span>
+          <span class="estrellas-interactivas">
+            <span data-valor="1">☆</span><span data-valor="2">☆</span><span data-valor="3">☆</span><span data-valor="4">☆</span><span data-valor="5">☆</span>
+          </span>
+        </div>  
+          </div>
+        </div>
+  </div>
+    </section>
+
+    <!-- CABAÑAS -->
+<section id="cabanas" class="seccion">
+  <div class="seccion-intro">
+    <h2 class="seccion__titulo">Tu Escape a la Naturaleza</h2>
+    <p>Desconéctate de la rutina y sumérgete en la tranquilidad del paisaje llanero. Nuestras cabañas te ofrecen un espacio acogedor y privado, ideal para descansar y recargar energías.</p>
+  </div>
+
+  <div class="tarjetas-cabanas">
+    <!-- CABAÑA 1: El Hato -->
+    <div class="tarjeta-cabana" data-id="1" data-tipo="cabana" onclick="expandirTarjeta(this)">
+      <h3>Cabaña El Hato</h3>
+      <div class="carrusel">
+        <button class="prev" onclick="moverCarrusel(event,-1)">❮</button>
+        <div class="imagenes-carrusel">
+          <img src="Cabaña El Hato/Hato portada.jpeg" class="activa" />
+          <img src="Cabaña El Hato/Hato C1.jpeg" />
+          <img src="Cabaña El Hato/Hato C2.jpeg" />
+          <img src="Cabaña El Hato/Hato H1.jpg" />
+          <img src="Cabaña El Hato/Hato C3.jpeg" />
+          <img src="Cabaña El Hato/Hato C4.jpeg" />
+          <img src="Cabaña El Hato/Hato H2.jpeg" />
+          <img src="Cabaña El Hato/Hato sala.jpeg" />
+          <img src="Cabaña El Hato/Hato f.jpeg" />
+          <img src="Cabaña El Hato/Hato piscina.jpeg" />
+        </div>
+        <button class="next" onclick="moverCarrusel(event,1)">❯</button>
+      </div>
+      <ul class="servicios-grid">
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M18 8V6a2 2 0 00-2-2H8a2 2 0 00-2 2v2m12 4v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4m12-4h-4a2 2 0 00-4 0H6m12 4v-4"/></svg></div>
+          <span class="servicio-item__tooltip">Zona para eventos</span>
+        </li>
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M17.66 10.34A8 8 0 006.34 10.34M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></div>
+          <span class="servicio-item__tooltip">Zona BBQ</span>
+        </li>
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2C8 8 2 8 2 14c0 4 4 8 10 8s10-4 10-8c0-6-6-6-10-12z"/></svg></div>
+          <span class="servicio-item__tooltip">Fogatas</span>
+        </li>
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4l2 2"/></svg></div>
+          <span class="servicio-item__tooltip">Cocina</span>
+        </li>
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.1a6 6 0 016.95 0M12 20.48V19.5"/></svg></div>
+          <span class="servicio-item__tooltip">Wifi</span>
+        </li>
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4l2 2"/></svg></div>
+          <span class="servicio-item__tooltip">Parqueadero</span>
+        </li>
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4l2 2"/></svg></div>
+          <span class="servicio-item__tooltip">Desayuno</span>
+        </li>
+      </ul>
+      <p><strong>Tel:</strong> 302 744 1105 - 311 455 6059</p>
+      <a href="https://wa.me/3027441105" target="_blank" class="tarjeta-contacto-link" title="WhatsApp">
+        <svg viewBox="0 0 24 24"><path fill="#25D366" d="M19.7,4.3c-1.9-1.9-4.4-2.9-7.1-2.9c-5.6,0-10.1,4.5-10.1,10.1c0,1.8,0.5,3.5,1.3,5l-1.5,5.5l5.6-1.5 c1.4,0.8,3,1.3,4.7,1.3h0c5.6,0,10.1-4.5,10.1-10.1C22.6,8.7,21.6,6.2,19.7,4.3z"/><path fill="#FFFFFF" d="M16.5,13.3c-0.3-0.1-1.6-0.8-1.8-0.9c-0.2-0.1-0.4-0.1-0.6,0.1c-0.2,0.2-0.7,0.9-0.8,1c-0.1,0.2-0.3,0.2-0.5,0.1 c-0.2-0.1-1.1-0.4-2.1-1.2c-0.8-0.7-1.3-1.5-1.5-1.8c-0.1-0.3,0-0.4,0.1-0.5c0.1-0.1,0.2-0.3,0.4-0.4c0.1-0.1,0.1-0.2,0.2-0.3 c0.1-0.1,0.1-0.2,0-0.4c-0.1-0.1-0.6-1.5-0.8-2.1c-0.2-0.5-0.4-0.5-0.6-0.5C8.8,7.6,8.6,7.6,8.4,7.6c-0.2,0-0.5,0.1-0.7,0.3 C7.5,8.2,7,8.8,7,9.8c0,1,0.7,1.9,0.8,2.1c0.1,0.2,1.5,2.3,3.7,3.2c2.2,0.9,2.2,0.6,2.6,0.6c0.4,0,1.6-0.7,1.8-1.3 c0.2-0.7,0.2-1.2,0.1-1.3C16.9,13.5,16.7,13.4,16.5,13.3z"/></svg>
+      </a>
+      <p><strong>Precio:</strong> Desde $70.000, Hasta $100.000 por noche</p>
+      <div class="tarjeta-ubicacion">
+        <div class="tarjeta-ubicacion__texto-wrapper">
+          <span class="tarjeta-ubicacion__texto">Mostrar ubicación en el mapa</span>
+        </div>
+       <a href="https://www.google.com/maps/place/Caba%C3%B1as+el+Hato/@5.0653796,-72.7510131,17z/data=!3m1!4b1!4m6!3m5!1s0x8e6ad9a53a1328bb:0x64953d58483981bd!8m2!3d5.0653743!4d-72.746405!16s%2Fg%2F11kqhqzlq3?entry=ttu&g_ep=EgoyMDI1MDgyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="tarjeta-ubicacion__link" title="Ver ubicación en Google Maps">
+              <div class="tarjeta-ubicacion__img-wrapper"><img src="ubicacion1.png" alt="Ubicación" class="tarjeta-ubicacion__img" /></div>
+            </a>
+
+            <div class="banner-calificacion">
+              <span class="banner-calificacion__texto">Califica este hotel:</span>
+          <span class="estrellas-interactivas">
+            <span data-valor="1">☆</span><span data-valor="2">☆</span><span data-valor="3">☆</span><span data-valor="4">☆</span><span data-valor="5">☆</span>
+          </span>
+        </div>  
+      </div>
+    </div>
+    <!-- CABAÑA 2: Los Ocobos -->
+    <div class="tarjeta-cabana" data-id="2" data-tipo="cabana" onclick="expandirTarjeta(this)">
+      <h3>Cabaña Los Ocobos</h3>
+      <div class="carrusel">
+        <button class="prev" onclick="moverCarrusel(event,-1)">❮</button>
+        <div class="imagenes-carrusel">
+          <img src="Cabaña Ocobos/ocobos portada.jpg" class="activa" />
+          <img src="Cabaña Ocobos/Ocobos C1.jpg" />
+          <img src="Cabaña Ocobos/Ocobos C2.jpg" />
+          <img src="Cabaña Ocobos/ocobos c3.jpg" />
+          <img src="Cabaña Ocobos/ocobos H1.jpg" />
+          <img src="Cabaña Ocobos/ocobos h2.jpg" />
+          <img src="Cabaña Ocobos/ocobos H3.jpg" />
+          <img src="Cabaña Ocobos/ocobos h4.jpg" />
+          <img src="Cabaña Ocobos/ocobos h5.jpg" />
+          <img src="Cabaña Ocobos/ocobos b1.jpg" />
+          <img src="Cabaña Ocobos/ocobos b2.jpg" />
+        </div>
+        <button class="next" onclick="moverCarrusel(event,1)">❯</button>
+      </div>
+      <ul class="servicios-grid">
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.1a6 6 0 016.95 0M12 20.48V19.5"/></svg></div>
+          <span class="servicio-item__tooltip">Wifi</span>
+        </li>
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg></div>
+          <span class="servicio-item__tooltip">TV</span>
+        </li>
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4l2 2"/></svg></div>
+          <span class="servicio-item__tooltip">Cocina</span>
+        </li>
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4l2 2"/></svg></div>
+          <span class="servicio-item__tooltip">Parqueadero</span>
+        </li>
+      </ul>
+      <p><strong>Tel:</strong> 312 807 0471 - 322 816 9009</p>
+      <a href="https://wa.me/3128070471" target="_blank" class="tarjeta-contacto-link" title="WhatsApp">
+        <svg viewBox="0 0 24 24"><path fill="#25D366" d="M19.7,4.3c-1.9-1.9-4.4-2.9-7.1-2.9c-5.6,0-10.1,4.5-10.1,10.1c0,1.8,0.5,3.5,1.3,5l-1.5,5.5l5.6-1.5 c1.4,0.8,3,1.3,4.7,1.3h0c5.6,0,10.1-4.5,10.1-10.1C22.6,8.7,21.6,6.2,19.7,4.3z"/><path fill="#FFFFFF" d="M16.5,13.3c-0.3-0.1-1.6-0.8-1.8-0.9c-0.2-0.1-0.4-0.1-0.6,0.1c-0.2,0.2-0.7,0.9-0.8,1c-0.1,0.2-0.3,0.2-0.5,0.1 c-0.2-0.1-1.1-0.4-2.1-1.2c-0.8-0.7-1.3-1.5-1.5-1.8c-0.1-0.3,0-0.4,0.1-0.5c0.1-0.1,0.2-0.3,0.4-0.4c0.1-0.1,0.1-0.2,0.2-0.3 c0.1-0.1,0.1-0.2,0-0.4c-0.1-0.1-0.6-1.5-0.8-2.1c-0.2-0.5-0.4-0.5-0.6-0.5C8.8,7.6,8.6,7.6,8.4,7.6c-0.2,0-0.5,0.1-0.7,0.3 C7.5,8.2,7,8.8,7,9.8c0,1,0.7,1.9,0.8,2.1c0.1,0.2,1.5,2.3,3.7,3.2c2.2,0.9,2.2,0.6,2.6,0.6c0.4,0,1.6-0.7,1.8-1.3 c0.2-0.7,0.2-1.2,0.1-1.3C16.9,13.5,16.7,13.4,16.5,13.3z"/></svg>
+      </a>
+      <p><strong>Precio:</strong> pareja $100.000 - familia $45.000 por persona</p>
+      <div class="tarjeta-ubicacion">
+        <div class="tarjeta-ubicacion__texto-wrapper">
+          <span class="tarjeta-ubicacion__texto">Mostrar ubicación en el mapa</span>
+        </div>
+        <a href="https://www.google.com/maps/place/%F0%9F%8F%A1CABA%C3%91AS+LOS+OCOBOS%F0%9F%8F%A1/@5.0729699,-72.7503706,17z/data=!3m1!4b1!4m6!3m5!1s0x8e6adf0068467127:0x70d2233b310affa9!8m2!3d5.0729646!4d-72.7477903!16s%2Fg%2F11xhb5ds3j?entry=ttu&g_ep=EgoyMDI1MDgyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="tarjeta-ubicacion__link" title="Ver ubicación en Google Maps">
+              <div class="tarjeta-ubicacion__img-wrapper"><img src="ubicacion1.png" alt="Ubicación" class="tarjeta-ubicacion__img" /></div>
+            </a>
+
+            <div class="banner-calificacion">
+              <span class="banner-calificacion__texto">Califica este hotel:</span>
+          <span class="estrellas-interactivas">
+            <span data-valor="1">☆</span><span data-valor="2">☆</span><span data-valor="3">☆</span><span data-valor="4">☆</span><span data-valor="5">☆</span>
+          </span>
+        </div>  
+      </div>
+    </div>
+    <!-- CABAÑA 3: Zona D -->
+    <div class="tarjeta-cabana" data-id="3" data-tipo="cabana" onclick="expandirTarjeta(this)">
+      <h3>Cabaña Zona D</h3>
+      <div class="carrusel">
+        <button class="prev" onclick="moverCarrusel(event,-1)">❮</button>
+        <div class="imagenes-carrusel">
+          <img src="Cabaña Zona D/Zona C1.jpg" class="activa" />
+          <img src="Cabaña Zona D/Zona baño.jpg" />
+          <img src="Cabaña Zona D/Zona C2.jpg" />
+          <img src="Cabaña Zona D/Zona C3.jpg" />
+          <img src="Cabaña Zona D/Zona H1.jpg" />
+          <img src="Cabaña Zona D/Zona H2.jpg" />
+          <img src="Cabaña Zona D/Zona H3.jpg" />
+          <img src="Cabaña Zona D/Zona H4.jpg" />
+          <img src="Cabaña Zona D/Zona H5.jpg" />
+        </div>
+        <button class="next" onclick="moverCarrusel(event,1)">❯</button>
+      </div>
+      <ul class="servicios-grid">
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.1a6 6 0 016.95 0M12 20.48V19.5"/></svg></div>
+          <span class="servicio-item__tooltip">Wifi</span>
+        </li>
+        <li class="servicio-item">
+          <div class="servicio-item__icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM12 8v4l2 2"/></svg></div>
+          <span class="servicio-item__tooltip">Parqueadero</span>
+        </li>
+      </ul>
+      <p><strong>Tel:</strong> 310 773 4116</p>
+      <a href="https://wa.me/3107734116" target="_blank" class="tarjeta-contacto-link" title="WhatsApp">
+        <svg viewBox="0 0 24 24"><path fill="#25D366" d="M19.7,4.3c-1.9-1.9-4.4-2.9-7.1-2.9c-5.6,0-10.1,4.5-10.1,10.1c0,1.8,0.5,3.5,1.3,5l-1.5,5.5l5.6-1.5 c1.4,0.8,3,1.3,4.7,1.3h0c5.6,0,10.1-4.5,10.1-10.1C22.6,8.7,21.6,6.2,19.7,4.3z"/><path fill="#FFFFFF" d="M16.5,13.3c-0.3-0.1-1.6-0.8-1.8-0.9c-0.2-0.1-0.4-0.1-0.6,0.1c-0.2,0.2-0.7,0.9-0.8,1c-0.1,0.2-0.3,0.2-0.5,0.1 c-0.2-0.1-1.1-0.4-2.1-1.2c-0.8-0.7-1.3-1.5-1.5-1.8c-0.1-0.3,0-0.4,0.1-0.5c0.1-0.1,0.2-0.3,0.4-0.4c0.1-0.1,0.1-0.2,0.2-0.3 c0.1-0.1,0.1-0.2,0-0.4c-0.1-0.1-0.6-1.5-0.8-2.1c-0.2-0.5-0.4-0.5-0.6-0.5C8.8,7.6,8.6,7.6,8.4,7.6c-0.2,0-0.5,0.1-0.7,0.3 C7.5,8.2,7,8.8,7,9.8c0,1,0.7,1.9,0.8,2.1c0.1,0.2,1.5,2.3,3.7,3.2c2.2,0.9,2.2,0.6,2.6,0.6c0.4,0,1.6-0.7,1.8-1.3 c0.2-0.7,0.2-1.2,0.1-1.3C16.9,13.5,16.7,13.4,16.5,13.3z"/></svg>
+      </a>
+      <p><strong>Precio:</strong> $50.000 por persona</p>
+      <div class="tarjeta-ubicacion">
+        <div class="tarjeta-ubicacion__texto-wrapper">
+          <span class="tarjeta-ubicacion__texto">Mostrar ubicación en el mapa</span>
+        </div>
+               <a href="https://www.google.com/maps/place/Restaurante+Zona+D/@5.075925,-72.7573412,3a,75y,90t/data=!3m8!1e2!3m6!1sCIABIhD1ohMsmPPVK9BIAFVl8obz!2e10!3e12!6shttps:%2F%2Flh3.googleusercontent.com%2Fgps-cs-s%2FAC9h4noOpc_C8F5ewtkT5qsK5_ZE_RJiRw0BWGz6N4HJTCjw8oO1XJNKBDJFVjZSQFdk2J85wwK6-CxfJmO7ijILdi6wLRO_13auTfE9fvcILKKSBM1TjqCXNn-qi1XQLVDzWFD0AFLTXx8926Pu%3Dw203-h152-k-no!7i4096!8i3072!4m7!3m6!1s0x8e6adfb35a2196f3:0xd130128affd672bf!8m2!3d5.0755625!4d-72.7579375!10e5!16s%2Fg%2F11pzhkqxp2?entry=ttu&g_ep=EgoyMDI1MDgyNS4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="tarjeta-ubicacion__link" title="Ver ubicación en Google Maps">
+              <div class="tarjeta-ubicacion__img-wrapper"><img src="ubicacion1.png" alt="Ubicación" class="tarjeta-ubicacion__img" /></div>
+            </a>
+
+            <div class="banner-calificacion">
+              <span class="banner-calificacion__texto">Califica este hotel:</span>
+          <span class="estrellas-interactivas">
+            <span data-valor="1">☆</span><span data-valor="2">☆</span><span data-valor="3">☆</span><span data-valor="4">☆</span><span data-valor="5">☆</span>
+          </span>
+        </div>  
+      </div>
+      
+    </div>
+    
+
+  </div>
+</section>
+  </main>
+</div>
+
+<!-- Overlay -->
+<div class="overlay-tarjeta" id="overlay">
+  <div class="contenido-expandido">
+    <button class="cerrar-btn" onclick="cerrarOverlay()">X</button>
+    <div class="imagenes-columna" id="miniaturas"></div>
+    <div class="info-expandida" id="infoExpandida"></div>
+  </div>
+</div>
+
+<!-- Modal para Zoom de Imagen -->
+<div id="zoom-modal" class="zoom-modal">
+  <button class="zoom-nav prev" id="zoom-prev">❮</button>
+  <img class="zoom-modal-content" id="zoom-img">
+  <button class="zoom-nav next" id="zoom-next">❯</button>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // --- CONFIGURACIÓN GENERAL Y EVENTOS ---
+
+  const btnMenu = document.getElementById('btn-menu');
+  const btnInicio = document.getElementById('btn-inicio');
+  const sidebar = document.querySelector('.sidebar');
+  const loader = document.getElementById('loader');
+  const btnTop = document.getElementById('btn-top');
+  const registroForm = document.querySelector('#registro form');
+  const loginForm = document.querySelector('#login form');
+  const zoomModal = document.getElementById('zoom-modal');
+  const zoomImg = document.getElementById('zoom-img');
+  const zoomPrev = document.getElementById('zoom-prev');
+  const zoomNext = document.getElementById('zoom-next');
+  const logoutLink = document.getElementById('logout-link');
+  const contactForm = document.getElementById('contact-form');
+
+  const stickyNav = document.getElementById('sticky-nav');
+  const heroHeader = document.querySelector('.hero-header');
+  const headerHeight = heroHeader ? heroHeader.offsetHeight : 0;
+  let usuarioActual = null;
+  let galeriaZoomActual = {
+    sources: [],
+    currentIndex: 0
+  };
+
+  // Mostrar loader y ocultarlo después de un tiempo
+  loader.style.display = 'flex';
+  setTimeout(() => { loader.style.display = 'none'; }, 1200);
+
+  // Cargar calificaciones promedio para todos al iniciar la página
+  fetch('obtener_promedios.php')
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        aplicarPromedios(data.promedios);
+      }
+    })
+    .catch(error => console.error('Error al obtener promedios:', error));
+
+  // Botón para mostrar/ocultar menú en móviles
+  btnMenu.addEventListener('click', () => sidebar.classList.toggle('visible'));
+
+  // Botón para volver al inicio
+  btnInicio.addEventListener('click', () => mostrarSeccion('bienvenida'));
+
+  // Lógica para mostrar/ocultar el botón "ir arriba"
+  window.addEventListener('scroll', () => {
+    btnTop.style.display = (window.scrollY > 300) ? 'flex' : 'none';
+
+    if (window.scrollY > headerHeight) {
+        stickyNav.classList.add('visible');
+    } else {
+        stickyNav.classList.remove('visible');
+    }
+  });
+  btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // Asignar eventos a todos los enlaces que cambian de sección
+  document.querySelectorAll('.seccion-link, .sidebar-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const seccionId = link.dataset.seccion;
+      mostrarSeccion(seccionId);
+    });
+  });
+
+  // Evento para cerrar el modal de zoom
+  zoomModal.addEventListener('click', () => {
+    zoomModal.style.display = "none";
+  });
+
+  // Eventos para navegar en el zoom sin cerrar el modal
+  zoomPrev.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navegarZoom(-1);
+  });
+
+  zoomNext.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navegarZoom(1);
+  });
+
+  // Evento para cerrar sesión
+  logoutLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    fetch('logout.php')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message);
+          actualizarUIAutenticacion(false);
+          mostrarSeccion('bienvenida');
+        }
+      }).catch(error => console.error('Error al cerrar sesión:', error));
+  });
+
+  document.getElementById('sticky-logout-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      // Simplemente dispara el evento del botón de logout original para no duplicar lógica
+      logoutLink.querySelector('a').click();
+  });
+
+  // Evento para el formulario de contacto
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(contactForm);
+      const data = Object.fromEntries(formData.entries());
+
+      fetch('enviar_contacto.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(result => {
+        alert(result.message);
+        if (result.success) {
+          contactForm.reset();
+        }
+      })
+      .catch(error => console.error('Error al enviar contacto:', error));
+    });
+  }
+  // --- LÓGICA DE AUTENTICACIÓN (CONEXIÓN CON BACKEND) ---
+
+  if (registroForm) {
+    registroForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(registroForm);
+      
+      fetch('registro.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        if (data.success) {
+          registroForm.reset();
+          mostrarSeccion('login');
+        }
+      })
+      .catch(error => {
+        console.error('Error en el registro:', error);
+        alert('Ocurrió un error. Por favor, intenta de nuevo.');
+      });
+    });
+  }
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(loginForm);
+      const usuario = formData.get('usuario');
+
+      fetch('login.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        if (data.success) {
+          usuarioActual = { id: data.userId, nombre: data.userName };
+          loginForm.reset();
+          actualizarUIAutenticacion(true, data.userId, data.userName);
+          mostrarSeccion('bienvenida');
+        }
+      })
+      .catch(error => {
+        console.error('Error en el inicio de sesión:', error);
+        alert('Ocurrió un error. Por favor, intenta de nuevo.');
+      });
+    });
+  }
+
+  // --- FUNCIONES AUXILIARES ---
+
+  const aplicarPromedios = (promedios) => {
+    for (const key in promedios) {
+      const [tipo, id] = key.split('_');
+      const data = promedios[key];
+      const tarjeta = document.querySelector(`.tarjeta-${tipo}[data-id="${id}"]`);
+
+      if (tarjeta) {
+        const contenedorPromedio = tarjeta.querySelector('.calificacion-publica');
+        if (contenedorPromedio) {
+          const promedio = parseFloat(data.promedio);
+          const estrellas = '★'.repeat(Math.round(promedio)) + '☆'.repeat(5 - Math.round(promedio));
+          
+          contenedorPromedio.innerHTML = `
+            <span class="estrellas-promedio">${estrellas}</span>
+            <span class="promedio-texto">${promedio.toFixed(1)} (${data.votos} ${data.votos === 1 ? 'voto' : 'votos'})</span>
+          `;
+        }
+      }
+    }
+  };
+
+  const pintarEstrellas = (contenedorEstrellas, puntuacion) => {
+      const spans = Array.from(contenedorEstrellas.children);
+      spans.forEach((s, i) => { s.textContent = i < puntuacion ? '★' : '☆'; });
+  };
+
+  const aplicarCalificacionesGuardadas = (calificaciones) => {
+    // Primero, resetear todas las estrellas por si el usuario cambia de cuenta
+    document.querySelectorAll('.estrellas-interactivas').forEach(estrellas => {
+        estrellas.dataset.calificacionGuardada = 0;
+        pintarEstrellas(estrellas, 0);
+    });
+
+    for (const key in calificaciones) {
+      const puntuacion = calificaciones[key];
+      const [tipo, id] = key.split('_');
+      
+      // Encontrar la tarjeta y luego las estrellas dentro de ella
+      const tarjeta = document.querySelector(`.tarjeta-${tipo}[data-id="${id}"]`);
+      if (tarjeta) {
+        const estrellas = tarjeta.querySelector('.estrellas-interactivas');
+        if (estrellas) {
+          estrellas.dataset.calificacionGuardada = puntuacion;
+          pintarEstrellas(estrellas, puntuacion);
+        }
+      }
+    }
+  };
+
+  const actualizarUIAutenticacion = (logueado, userId = null, nombreUsuario = '') => {
+    const mainAuthButtons = document.getElementById('main-auth-buttons');
+    const sidebarAuthLinks = document.getElementById('sidebar-auth-links');
+    const banner = document.getElementById('banner-welcome');
+    // Elementos de la barra de navegación pegajosa
+    const stickyLoginBtn = document.getElementById('sticky-login-btn');
+    const stickyRegisterBtn = document.getElementById('sticky-register-btn');
+    const stickyLogoutLink = document.getElementById('sticky-logout-link');
+
+    if (logueado) {
+      usuarioActual = { id: userId, nombre: nombreUsuario };
+      mainAuthButtons.style.display = 'none';
+      logoutLink.style.display = 'block';
+      sidebarAuthLinks.style.display = 'none';
+      banner.querySelector('span').textContent = `🏕️ ¡Hola, ${nombreUsuario}! — disfruta la naturaleza y hospitalidad de Tauramena 🐴`;
+      // Actualizar barra pegajosa
+      stickyLoginBtn.style.display = 'none';
+      stickyRegisterBtn.style.display = 'none';
+      stickyLogoutLink.style.display = 'block';
+
+      // Cargar calificaciones del usuario
+      fetch('obtener_calificaciones.php')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            aplicarCalificacionesGuardadas(data.calificaciones);
+          }
+        })
+        .catch(error => console.error('Error al obtener calificaciones:', error));
+    } else {
+      mainAuthButtons.style.display = 'flex';
+      logoutLink.style.display = 'none';
+      sidebarAuthLinks.style.display = 'block';
+      banner.querySelector('span').textContent = `🏕️ Bienvenido a Tauramena, Casanare — Naturaleza, descanso y hospitalidad 🐴`;
+      // Actualizar barra pegajosa
+      stickyLoginBtn.style.display = 'inline-block';
+      stickyRegisterBtn.style.display = 'inline-block';
+      stickyLogoutLink.style.display = 'none';
+      usuarioActual = null;
+      // Limpiar calificaciones al cerrar sesión
+      aplicarCalificacionesGuardadas({});
+    }
+  };
+
+  window.mostrarSeccion = (id) => {
+    document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
+    
+    // Actualizar estado activo en el sidebar
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+      link.classList.remove('active');
+      if (link.dataset.seccion === id) link.classList.add('active');
+    });
+
+    const sec = document.getElementById(id);
+    if (sec) sec.classList.add('activa');
+    
+    btnInicio.style.display = id === 'bienvenida' ? 'none' : 'block';
+
+    // Animación en cascada para tarjetas
+    if (id === 'hoteles' || id === 'cabanas') {
+      const tarjetas = sec.querySelectorAll('.tarjeta-hotel, .tarjeta-cabana');
+      tarjetas.forEach((t, i) => {
+        t.style.opacity = 0;
+        t.style.animation = `aparecerCascada 0.5s forwards`;
+        t.style.animationDelay = `${i * 0.15}s`;
+      });
+    }
+  };
+
+  // Carrusel
+  window.moverCarrusel = (e, direccion) => {
+    e.stopPropagation();
+    const carrusel = e.currentTarget.closest('.carrusel').querySelector('.imagenes-carrusel');
+    let imgs = Array.from(carrusel.querySelectorAll('img'));
+    let index = imgs.findIndex(img => img.classList.contains('activa'));
+    imgs[index].classList.remove('activa');
+    index = (index + direccion + imgs.length) % imgs.length;
+    imgs[index].classList.add('activa');
+  };
+
+  // Overlay para tarjetas
+  window.expandirTarjeta = (tarjeta) => {
+    const overlay = document.getElementById('overlay');
+    const miniaturasContainer = document.getElementById('miniaturas');
+    const infoContainer = document.getElementById('infoExpandida');
+
+    // Limpiar contenido anterior
+    miniaturasContainer.innerHTML = '';
+    infoContainer.innerHTML = '';
+
+    // 1. Extraer datos de la tarjeta clickeada
+    const titulo = tarjeta.querySelector('h3').cloneNode(true);
+    const imagenesSrc = Array.from(tarjeta.querySelectorAll('.imagenes-carrusel img')).map(img => img.src);
+    const elementosInfo = tarjeta.querySelectorAll('p, .servicios-lista, a[href*="google.com/maps"], a[href*="wa.me"]');
+
+    // 2. Construir la vista expandida
+    // Imagen principal
+    const mainImage = document.createElement('img');
+    mainImage.src = imagenesSrc[0] || '';
+    mainImage.className = 'main-image-expandida';
+    mainImage.addEventListener('click', () => {
+      // Configurar la galería para el zoom
+      galeriaZoomActual.sources = imagenesSrc;
+      const currentImageIndex = galeriaZoomActual.sources.findIndex(src => src === mainImage.src);
+      galeriaZoomActual.currentIndex = currentImageIndex;
+      zoomImg.src = galeriaZoomActual.sources[galeriaZoomActual.currentIndex];
+      zoomModal.style.display = "block";
+    });
+    infoContainer.appendChild(mainImage);
+
+    // Título
+    infoContainer.appendChild(titulo);
+
+    // Resto de la información (teléfono, precio, servicios, etc.)
+    elementosInfo.forEach(el => {
+      if (!el.closest('.banner-calificacion')) { // Evitar clonar las estrellas de calificación
+        infoContainer.appendChild(el.cloneNode(true));
+      }
+    });
+
+    // 3. Poblar las miniaturas y añadirles eventos
+    imagenesSrc.forEach((src, index) => {
+      const miniaturaImg = document.createElement('img');
+      miniaturaImg.src = src;
+      if (index === 0) {
+        miniaturaImg.classList.add('activa');
+      }
+      miniaturaImg.addEventListener('click', () => {
+        mainImage.src = src;
+        miniaturasContainer.querySelectorAll('img').forEach(img => img.classList.remove('activa'));
+        miniaturaImg.classList.add('activa');
+      });
+      miniaturasContainer.appendChild(miniaturaImg);
+    });
+
+    // 4. Mostrar el overlay
+    overlay.style.display = 'flex';
+  };
+
+  window.cerrarOverlay = () => {
+    document.getElementById('overlay').style.display = 'none';
+  };
+
+  const navegarZoom = (direccion) => {
+    const totalImagenes = galeriaZoomActual.sources.length;
+    if (totalImagenes === 0) return;
+
+    // Calcular el nuevo índice
+    let nuevoIndex = (galeriaZoomActual.currentIndex + direccion + totalImagenes) % totalImagenes;
+    galeriaZoomActual.currentIndex = nuevoIndex;
+    zoomImg.src = galeriaZoomActual.sources[nuevoIndex];
+  };
+
+  // Calificación con estrellas
+  document.querySelectorAll('.estrellas-interactivas').forEach(estrellas => {
+    const spans = Array.from(estrellas.children);
+    pintarEstrellas(estrellas, 0); // Inicializar todas en 0
+    spans.forEach((star, idx) => {
+      star.addEventListener('mouseenter', () => spans.forEach((s, i) => { s.textContent = i <= idx ? '★' : '☆'; }));
+      star.addEventListener('mouseleave', () => {
+        const calificacionGuardada = parseInt(estrellas.dataset.calificacionGuardada) || 0;
+        pintarEstrellas(estrellas, calificacionGuardada);
+      });
+      star.addEventListener('click', (e) => {
+        e.stopPropagation(); // Evita que el clic se propague a la tarjeta y abra el overlay
+        // 1. Verificar si el usuario ha iniciado sesión
+        if (!usuarioActual) {
+          alert('Por favor, inicia sesión para poder calificar.');
+          mostrarSeccion('login');
+          return;
+        }
+
+        // 2. Obtener datos de la tarjeta
+        const valor = idx + 1;
+        const tarjeta = estrellas.closest('.tarjeta-hotel, .tarjeta-cabana');
+        const establecimientoId = tarjeta.dataset.id;
+        const tipoEstablecimiento = tarjeta.dataset.tipo;
+
+        // 3. Preparar y enviar datos al backend
+        const datosCalificacion = {
+          establecimiento_id: establecimientoId,
+          tipo: tipoEstablecimiento,
+          puntuacion: valor
+        };
+
+        fetch('calificar.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(datosCalificacion)
+        })
+        .then(response => response.json())
+        .then(data => {
+          let mensaje = estrellas.parentElement.querySelector('.mensaje-calificacion');
+          if (!mensaje) {
+            mensaje = document.createElement('div');
+            mensaje.className = 'mensaje-calificacion';
+            mensaje.style.cssText = 'font-size: 1rem; color: #7c3aed; margin-top: 6px; transition: color 0.3s;';
+            estrellas.parentElement.appendChild(mensaje);
+          }
+          mensaje.textContent = data.message;
+          mensaje.style.color = data.success ? '#7c3aed' : 'red';
+          if (data.success) {
+            estrellas.dataset.calificacionGuardada = valor;
+            // Actualizar la calificación pública en tiempo real
+            const contenedorPromedio = tarjeta.querySelector('.calificacion-publica');
+            if (contenedorPromedio && data.nuevoPromedio) {
+              const promedio = parseFloat(data.nuevoPromedio);
+              const estrellasPromedio = '★'.repeat(Math.round(promedio)) + '☆'.repeat(5 - Math.round(promedio));
+              contenedorPromedio.innerHTML = `
+                <span class="estrellas-promedio">${estrellasPromedio}</span>
+                <span class="promedio-texto">${promedio.toFixed(1)} (${data.totalVotos} ${data.totalVotos === 1 ? 'voto' : 'votos'})</span>
+              `;
+            }
+          }
+        })
+        .catch(error => console.error('Error al calificar:', error));
+      });
+    });
+  });
+
+});
+</script>
+
+<footer>
+  &copy; 2025 Proyecto Técnica de programación de software. Autores: Nikol Cortes, Mariana Villada, Laura Vallejo.
+</footer>
+</body>
+</html>
