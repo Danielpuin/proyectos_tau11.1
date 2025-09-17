@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Fondo circular para destacar el ícono -->
+  <circle cx="32" cy="32" r="30" fill="#4caf50"/>
+  <!-- Edificio principal del hotel -->
+  <rect x="16" y="20" width="32" height="28" rx="5" fill="#fff" stroke="#388e3c" stroke-width="2"/>
+  <!-- Puerta -->
+  <rect x="28" y="38" width="8" height="10" rx="2" fill="#ffd700" stroke="#388e3c" stroke-width="1"/>
+  <!-- Ventanas -->
+  <rect x="20" y="26" width="6" height="6" rx="1" fill="#7ecbff"/>
+  <rect x="38" y="26" width="6" height="6" rx="1" fill="#7ecbff"/>
+  <rect x="20" y="34" width="6" height="6" rx="1" fill="#7ecbff"/>
+  <rect x="38" y="34" width="6" height="6" rx="1" fill="#7ecbff"/>
+  <!-- Tejado -->
+  <rect x="14" y="16" width="36" height="8" rx="4" fill="#388e3c"/>
+</svg>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Acceso - Hospedaje Tauramena</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(120deg, var(--verde-claro) 60%, var(--azul-cielo) 100%); }
+    .acceso-container { background: #fff; border-radius: 18px; box-shadow: 0 4px 24px rgba(44,44,44,0.18); padding: 32px 24px; max-width: 400px; width: 100%; }
+    .acceso-container h2 { text-align: center; color: var(--verde-naturaleza); margin-bottom: 18px; font-size: 2rem; }
+    .acceso-container form { display: flex; flex-direction: column; gap: 16px; }
+    .acceso-container input { padding: 12px; border-radius: 8px; border: 1.5px solid var(--verde-naturaleza); font-size: 1.1rem; }
+    .acceso-container button { background: var(--verde-naturaleza); color: #fff; font-size: 1.2rem; padding: 12px; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 8px rgba(44,44,44,0.12); transition: background 0.3s; font-weight: bold; }
+    .acceso-container .switch-link { text-align: center; font-size: 1rem; margin-top: 8px; }
+    .acceso-container .switch-link a { color: var(--verde-naturaleza); text-decoration: underline; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="acceso-container">
+    <section id="login" style="display:block;">
+      <h2>Iniciar Sesión</h2>
+      <form id="form-login">
+        <input type="text" id="login-user" placeholder="Usuario" required>
+        <input type="password" id="login-pass" placeholder="Contraseña" required>
+        <button type="submit">Entrar</button>
+      </form>
+      <div class="switch-link">¿No tienes cuenta? <a onclick="mostrarRegistro()">Regístrate</a></div>
+    </section>
+    <section id="registro" style="display:none;">
+      <h2>Registro de Usuario</h2>
+      <form id="form-registro">
+        <input type="text" id="reg-user" placeholder="Usuario" required>
+        <input type="email" id="reg-email" placeholder="Correo electrónico" required>
+        <input type="password" id="reg-pass" placeholder="Contraseña" required>
+        <button type="submit">Registrar</button>
+      </form>
+      <div class="switch-link">¿Ya tienes cuenta? <a onclick="mostrarLogin()">Inicia sesión</a></div>
+    </section>
+  </div>
+  <script>
+    function mostrarRegistro() {
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('registro').style.display = 'block';
+    }
+    function mostrarLogin() {
+      document.getElementById('registro').style.display = 'none';
+      document.getElementById('login').style.display = 'block';
+    }
+    // Registro
+    document.getElementById('form-registro').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var usuario = document.getElementById('reg-user').value;
+      var correo = document.getElementById('reg-email').value;
+      var contrasena = document.getElementById('reg-pass').value;
+      if(usuario && correo && contrasena) {
+        var usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+        if(usuarios.find(u => u.usuario === usuario)) {
+          alert('El usuario ya existe.');
+        } else {
+          usuarios.push({usuario, correo, contrasena});
+          localStorage.setItem('usuarios', JSON.stringify(usuarios));
+          alert('¡Usuario registrado exitosamente!');
+          document.getElementById('form-registro').reset();
+          mostrarLogin();
+        }
+      } else {
+        alert('Por favor, completa todos los campos.');
+      }
+    });
+    // Login
+    document.getElementById('form-login').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var usuario = document.getElementById('login-user').value;
+      var contrasena = document.getElementById('login-pass').value;
+      var usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+      var encontrado = usuarios.find(u => u.usuario === usuario && u.contrasena === contrasena);
+      if(encontrado) {
+        localStorage.setItem('usuarioActivo', usuario);
+        document.getElementById('form-login').reset();
+        // Mensaje personalizado antes de redirigir
+        let mensaje = document.createElement('div');
+        mensaje.textContent = '¡Bienvenido, ' + usuario + '! Serás redirigido a la página principal.';
+        mensaje.style = 'background: #eaf6f6; color: #388e3c; font-size: 1.2rem; text-align: center; padding: 18px; border-radius: 12px; margin-top: 18px; font-weight: bold;';
+        document.querySelector('.acceso-container').appendChild(mensaje);
+        setTimeout(function(){ window.location.href = 'INICIO1.HTML'; }, 1800);
+      } else {
+        alert('Usuario o contraseña incorrectos.');
+      }
+    });
+  </script>
+</body>
+</html>

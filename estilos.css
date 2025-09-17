@@ -1,0 +1,470 @@
+/* Modal para ampliar imagen */
+.img-modal {
+  display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(44,44,44,0.7); justify-content:center; align-items:center;
+}
+.img-modal img {
+  max-width:90vw; max-height:90vh; border-radius:16px; box-shadow:0 4px 24px #0008;
+}
+.img-modal.active { display:flex; }
+/* Fondo visual para el header */
+/* Header visual mejorado */
+:root {
+  --color-primario: #388e3c;
+  --color-secundario: #2f80ed;
+  --color-acento: #ffd700;
+  --color-fondo: #f5f3e7;
+  --color-blanco: #fff;
+  --color-gris: #eaf6f6;
+  --color-hover: #7c3aed;
+  --color-shadow: rgba(44,44,44,0.13);
+  --color-tarjeta: #ffffff;
+  --color-tarjeta-hover: #f3e8ff;
+}
+
+body {
+  background: linear-gradient(90deg, var(--color-fondo-inicio) 0%, var(--color-fondo-final) 100%);
+  color: var(--color-primario);
+  font-family: 'Quicksand', 'Segoe UI', sans-serif;
+}
+
+.header-text {
+  background: linear-gradient(120deg, var(--color-blanco) 60%, var(--color-tarjeta) 100%);
+  border-radius: 32px;
+  box-shadow: 0 8px 32px var(--color-shadow), 0 2px 8px var(--color-shadow);
+  padding: 40px 0 32px 0;
+  margin-bottom: 18px;
+  border: 2px solid var(--color-primario);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInDown 1s;
+}
+
+.header-text h1 {
+  font-size: 3.1rem;
+  color: var(--color-primario);
+  text-shadow: 0 4px 18px var(--color-gris), 0 2px 12px var(--color-acento);
+  font-weight: 800;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.header-text .logo {
+  height: 110px;
+  width: auto;
+  margin-left: 20px;
+  margin-right: 20px;
+  box-shadow: 0 4px 24px var(--color-shadow), 0 2px 8px var(--color-shadow);
+  border-radius: 18px;
+  transition: transform 0.4s;
+}
+.header-text .logo:hover {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.header-text .frase {
+  font-size: 2.1rem;
+  color: var(--color-secundario);
+  margin-top: 18px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-align: center;
+  text-shadow: 0 2px 12px var(--color-gris), 0 1px 8px var(--color-acento);
+}
+
+/* Animación para el header */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Botón flotante para ir arriba */
+#btn-top {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  background: var(--color-hover);
+  color: var(--color-blanco);
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 2rem;
+  box-shadow: 0 4px 16px var(--color-shadow);
+  cursor: pointer;
+  opacity: 0.8;
+  z-index: 9999;
+  transition: background 0.3s, transform 0.3s;
+}
+#btn-top:hover {
+  background: var(--color-acento);
+  color: var(--color-primario);
+  transform: scale(1.1);
+}
+
+/* Tarjetas con animación y colores modernos */
+.tarjeta-hotel, .tarjeta-cabana {
+  background: linear-gradient(120deg, var(--color-tarjeta) 60%, var(--color-tarjeta-hover) 100%);
+  padding: 22px 18px 18px 18px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px var(--color-shadow), 0 2px 8px var(--color-shadow);
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
+  border: 2px solid var(--color-primario);
+  opacity: 0;
+  animation: fadeIn 1.2s forwards;
+}
+.tarjeta-hotel:hover, .tarjeta-cabana:hover {
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 16px 32px var(--color-shadow);
+  background: linear-gradient(120deg, var(--color-acento) 80%, var(--color-primario) 100%);
+}
+
+/* Botones y enlaces con efecto moderno */
+button, .sidebar a {
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s, transform 0.2s;
+  border-radius: 8px;
+}
+button:hover, .sidebar a:hover {
+  background: var(--color-hover);
+  color: var(--color-blanco);
+  box-shadow: 0 4px 16px var(--color-shadow);
+  transform: scale(1.08);
+}
+
+/* Loader animado */
+#loader {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+#loader .spinner {
+  border: 6px solid var(--color-gris);
+  border-top: 6px solid var(--color-hover);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.header-text {
+  background: linear-gradient(120deg, #e2f7e1 60%, #fffbe6 100%);
+  border-radius: 24px;
+  box-shadow: 0 8px 32px rgba(44,44,44,0.13), 0 2px 8px rgba(44,44,44,0.10);
+  padding: 32px 0;
+  margin-bottom: 16px;
+  border: 2px solid #b2dfdb;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  justify-content: center;
+}
+.header-text h1 {
+  font-size: 3.1rem;
+  color: #388e3c;
+  text-shadow: 0 4px 18px #b2dfdb, 0 2px 12px #fff7ae;
+  font-weight: 800;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  text-align: center;
+}
+.header-text .logo {
+  height: 110px;
+  width: auto;
+  margin-left: 20px;
+  margin-right: 20px;
+  box-shadow: 0 4px 24px rgba(56,142,60,0.18), 0 2px 8px rgba(44,44,44,0.10);
+  border-radius: 18px;
+}
+.header-text .frase {
+  font-size: 2.1rem;
+  color: #e0eaf7;
+  margin-top: 18px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-align: center;
+  text-shadow: 0 2px 12px #b2dfdb, 0 1px 8px #fffbe6;
+}
+/* Mejoras responsive generales */
+@media (max-width: 900px) {
+  .container { flex-direction: column; }
+  .sidebar {
+    position: fixed;
+    left: -240px;
+    top: 0;
+    height: 100vh;
+    z-index: 2000;
+    transition: left 0.4s;
+    width: 220px;
+  }
+  .sidebar.visible { left: 0; }
+  #btn-menu {
+    display: block;
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    background: var(--azul-claro);
+    color: var(--blanco);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.7rem;
+    z-index: 2100;
+    box-shadow: 0 2px 8px rgba(44,44,44,0.12);
+    cursor: pointer;
+  }
+  .tarjetas-hoteles, .tarjetas-cabanas {
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 12px;
+  }
+  .logo { height: 60px; }
+  header { flex-direction: column; padding: 18px; }
+}
+
+@media (max-width: 600px) {
+  .content { padding: 8px; }
+  .header-text h1 { font-size: 1.2rem; }
+  .banner-outside { font-size: 0.95rem; padding: 7px; }
+  .tarjeta-hotel, .tarjeta-cabana { padding: 8px; border-radius: 12px; }
+  .tarjetas-hoteles, .tarjetas-cabanas {
+    grid-template-columns: 1fr;
+    gap: 12px 0;
+  }
+  .sidebar { width: 180px; padding: 18px 8px; }
+  .logo { height: 40px; }
+  header { flex-direction: column; padding: 10px; }
+  .carrusel img, .imagenes-carrusel img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+  .servicio-icon svg { width: 24px; height: 24px; }
+  .sidebar a { font-size: 1rem; }
+}
+/* Estilos adicionales extraídos del HTML */
+.tarjeta-hotel, .tarjeta-cabana {
+  will-change: transform, box-shadow;
+}
+.tarjeta-hotel:hover, .tarjeta-cabana:hover {
+  box-shadow: 0 16px 32px rgba(44,44,44,0.22), 0 2px 8px rgba(44,44,44,0.10);
+  transform: translateY(-10px) scale(1.05);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+button, .sidebar a {
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+button:hover, .sidebar a:hover {
+  box-shadow: 0 4px 16px rgba(44,44,44,0.18);
+  transform: scale(1.08);
+}
+.overlay-tarjeta {
+  backdrop-filter: blur(6px);
+  background-color: rgba(0,0,0,0.6);
+}
+.seccion.activa {
+  animation: fadeIn 0.7s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.indicadores-carrusel {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.indicador-carrusel {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gris-claro);
+  border: 2px solid var(--azul-claro);
+  cursor: pointer;
+  transition: background 0.3s, border 0.3s;
+}
+.indicador-carrusel.activo {
+  background: var(--dorado);
+  border-color: var(--azul-suave);
+}
+@media (max-width: 900px) {
+  .container { flex-direction: column; }
+  .sidebar {
+    position: fixed;
+    left: -240px;
+    top: 0;
+    height: 100vh;
+    z-index: 2000;
+    transition: left 0.4s;
+  }
+  .sidebar.visible {
+    left: 0;
+  }
+  #btn-menu {
+    display: block;
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    background: var(--azul-claro);
+    color: var(--blanco);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    font-size: 1.7rem;
+    z-index: 2100;
+    box-shadow: 0 2px 8px rgba(44,44,44,0.12);
+    cursor: pointer;
+  }
+}
+@media (max-width: 600px) {
+  .content { padding: 12px; }
+  .header-text h1 { font-size: 1.5rem; }
+  .banner-outside { font-size: 1rem; padding: 10px; }
+  .tarjeta-hotel, .tarjeta-cabana { padding: 8px; }
+}
+/* Estilos principales para la página de hospedaje en Tauramena */
+:root {
+  /* Degradado suave para el fondo principal */
+  --color-fondo-inicio: #f9fafb;
+  --color-fondo-final: #e3f0ff;
+  --color-primario: #6fcf97;
+  --color-secundario: #56ccf2;
+  --color-acento: #ffe082;
+  --color-blanco: #fff;
+  --color-gris: #e3f0ff;
+  --color-hover: #7c3aed;
+  --color-shadow: rgba(44,44,44,0.13);
+  --color-tarjeta: #ffffff;
+  --color-tarjeta-hover: #f3f8fd;
+  /* Otros colores suaves */
+  --verde-suave: #b2e9c7;
+  --azul-suave: #b2eaff;
+  --amarillo-suave: #fffde7;
+  --gris-suave: #f5f7fa;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; transition: background 0.3s, color 0.3s, box-shadow 0.3s, border 0.3s; }
+body { font-family: 'Quicksand', 'Segoe UI', sans-serif; background: linear-gradient(120deg, var(--verde-claro) 60%, var(--azul-cielo) 100%); color: var(--contraste-fuerte); }
+
+header {
+  background: linear-gradient(90deg, var(--verde-naturaleza) 70%, var(--dorado) 100%);
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 16px rgba(34, 84, 61, 0.15);
+  transition: background 0.4s, box-shadow 0.4s;
+}
+.logo { height: 100px; width: auto; }
+.header-text { flex-grow: 1; text-align: center; padding-right: 20px; }
+.header-text h1 { margin-bottom: 5px; font-size: 2.3rem; font-weight: 700; letter-spacing: 1.5px; color: var(--azul-oscuro); text-shadow: 1px 1px 8px var(--gris-claro); font-family: 'Quicksand', 'Segoe UI', sans-serif; }
+.frase { font-style: italic; color: var(--cafe-oscuro); font-size: 1.15rem; margin-top: 8px; letter-spacing: 1px; font-family: 'Quicksand', 'Segoe UI', sans-serif; }
+
+.container { display: flex; }
+.sidebar {
+  width: 230px;
+  background: linear-gradient(90deg, var(--color-fondo-inicio) 0%, var(--color-fondo-final) 100%);
+  padding: 32px 22px 32px 22px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  box-shadow: 0 8px 32px rgba(44,44,44,0.18), 0 2px 8px rgba(44,44,44,0.10);
+  border-top-right-radius: 32px;
+  border-bottom-right-radius: 32px;
+  border-left: 4px solid #7c3aed;
+  border-right: 2px solid #e3f0ff;
+  border-top: 2px solid #e3f0ff;
+  border-bottom: 2px solid #e3f0ff;
+  transition: background 0.4s, box-shadow 0.3s, border 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  filter: drop-shadow(0 4px 24px rgba(44,44,44,0.10));
+}
+.sidebar ul { list-style: none; padding: 0; }
+.sidebar li { margin-bottom: 20px; }
+.sidebar a {
+  color: #2d2d2d;
+  text-shadow: 0 2px 12px #388e3c, 0 1px 8px #7fffd4;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1.18rem;
+  letter-spacing: 1.5px;
+  transition: color 0.3s, text-shadow 0.3s;
+  font-family: 'Quicksand', 'Segoe UI', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0 10px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.08);
+}
+.sidebar a:hover {
+  color: #97c3e7;
+  background: linear-gradient(90deg,#fffbe6 60%,#7fffd4 100%);
+  text-shadow: 0 0 12px #7c3aed, 0 0 8px #7fffd4;
+  box-shadow: 0 4px 16px rgba(44,44,44,0.10);
+}
+
+.banner-outside {
+  background: linear-gradient(90deg, #e3f0ff 80%, #b2eaff 100%);
+  color: #388e3c;
+  text-align: center;
+  padding: 16px 24px;
+  font-size: 1.3rem;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(34,84,61,0.10);
+  margin-bottom: 22px;
+  border-radius: 12px;
+  letter-spacing: 1px;
+}
+
+.bienvenida {
+  height: calc(100vh - 180px);
+  background: linear-gradient(120deg, #e3f0ff 60%, #b2eaff 100%);
+  background-image: url('fondo.jpeg');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(1.05) saturate(1.2);
+}
+
+.tarjeta-hotel, .tarjeta-cabana {
+  background: linear-gradient(120deg, var(--azul-cielo) 60%, var(--verde-claro) 100%);
+  padding: 22px 18px 18px 18px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(34,84,61,0.13), 0 2px 8px rgba(34,84,61,0.10);
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
+  opacity: 0;
+  border: 2px solid var(--verde-naturaleza);
+}
+.tarjeta-hotel:hover, .tarjeta-cabana:hover {
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 16px 32px rgba(34,84,61,0.22), 0 2px 8px rgba(34,84,61,0.10);
+  background: linear-gradient(120deg, var(--dorado) 80%, var(--verde-naturaleza) 100%);
+}
+
+/* ...agrega aquí el resto de tus estilos personalizados... */
